@@ -1,0 +1,100 @@
+.booking-form {
+  max-width: 500px;
+  margin: 20px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+}
+
+.booking-form label {
+  display: block;
+  margin-top: 10px;
+}
+
+.booking-form input, 
+.booking-form select, 
+.booking-form button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.calendar-container {
+  display: none;
+  margin-top: 15px;
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+}
+
+.day {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  background: #f9f9f9;
+  font-size: 0.8rem;
+}
+
+.day h4 {
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.hour {
+  padding: 3px;
+  margin: 2px 0;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 3px;
+  background: #d4edda;
+  font-size: 0.75rem;
+}
+
+.hour.booked {
+  background: #f8d7da;
+  cursor: not-allowed;
+  color: #721c24;
+}
+
+.calendar-toggle {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.calendar-toggle img {
+  width: 24px;
+  margin-left: 5px;
+}
+
+#selectedHour {
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.nav-arrow {
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 0 10px;
+  user-select: none;
+}

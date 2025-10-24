@@ -1,0 +1,181 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #f9f8fb;
+  color: #3a2a57;
+}
+
+header {
+  background-color: #d6c8f5;
+  color: #3a2a57;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+nav a {
+  margin: 0 10px;
+  color: #3a2a57;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+nav a.active {
+  border-bottom: 2px solid #6a4fbf;
+}
+
+.admin-main {
+  padding: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.admin-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.admin-buttons button {
+  background-color: #cbbcf5;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.admin-buttons button.active,
+.admin-buttons button:hover {
+  background-color: #9d84f3;
+  color: white;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Формата за продукти */
+#productForm {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+#productForm input,
+#productForm textarea,
+#productForm select {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+#productForm button {
+  background-color: #9d84f3;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+}
+
+#productForm button:hover {
+  background-color: #7f63da;
+}
+
+/* Продукти */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 15px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.product-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.btn-group {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.delete-btn {
+  background-color: #f56262;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #d43a3a;
+}
+
+/* Календар */
+.calendar-section {
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+  }
+  nav {
+    margin-top: 10px;
+  }
+}
+
+.order-item {
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.order-item ul {
+  margin-top: 5px;
+  padding-left: 20px;
+}

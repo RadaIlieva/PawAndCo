@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paw&Co Grooming Studio</title>
+  <link rel="stylesheet" href="/frontend/css/styles.css">
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo-container">
+       <img src="/frontend/images/logo.jpg" alt="Лого" class="logo">
+      <h1>Paw&Co Grooming Studio</h1>
+    </div>
+    <nav>
+      <a href="index.html" class="active">Начало</a>
+      <a href="booking.html">Резервирай час</a>
+      <a href="products.html">Продукти</a>
+      <a href="admin.html">Администратор</a>
+    </nav>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="info-section">
+    <!-- 🗺️ Карта -->
+    <div class="map-container">
+      <iframe 
+        src="https://www.google.com/maps?q=ul.%20Aleksander%20Veliki%2034,%20Burgas,%20Bulgaria&output=embed"
+        allowfullscreen=""
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+
+    <!-- ℹ️ Контактна информация -->
+    <div class="contact-box">
+      <h2>🐾 Добре дошли в Paw&Co!</h2>
+      <p>✂️ Подстригване | 🛁 Къпане | 💅 Нокти</p>
+      <p>📍 Бургас, ul. "Aleksander Veliki" 34</p>
+      <p>📞 <a href="tel:+359888123456">+359 888 123 456</a></p>
+      <p>📸 Instagram: <a href="https://instagram.com/pawandco.bg" target="_blank">@pawandco.bg</a></p>
+      <p>📲 Facebook: <a href="https://facebook.com/pawandco" target="_blank">facebook.com/pawandco</a></p>
+    </div>
+
+    <!-- 🐶 Галерия -->
+    <div class="gallery-container">
+      <div class="gallery-slider">
+        <img src="/frontend/images/imgg1.jpg" alt="Куче 1">
+        <img src="/frontend/images/img2.jpg" alt="Куче 2">
+        <img src="/frontend/images/img3.jpg" alt="Куче 3">
+        <img src="/frontend/images/img4.jpg" alt="Куче 4">
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>📍 ul. "Aleksander Veliki" 34, Burgas, Bulgaria 8000</p>
+  <p>📲 Резервации в DM | Instagram: @pawandco.bg</p>
+</footer>
+
+<script>
+  let index = 0;
+  const slides = document.querySelectorAll('.gallery-slider img');
+
+  function showNextImage() {
+    slides.forEach((img, i) => {
+      img.style.display = i === index ? 'block' : 'none';
+    });
+    index = (index + 1) % slides.length;
+  }
+
+  setInterval(showNextImage, 3000);
+  showNextImage();
+</script>
+
+</body>
+</html>

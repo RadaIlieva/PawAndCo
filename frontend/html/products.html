@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Продукти - Paw&Co</title>
+  <link rel="stylesheet" href="/frontend/css/products.css" />
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo-container">
+      <img src="/frontend/images/logo.jpg" alt="Лого" class="logo">
+      <h1>Paw&Co Grooming Studio</h1>
+    </div>
+    <nav>
+      <a href="index.html">Начало</a>
+      <a href="booking.html">Резервирай час</a>
+      <a href="products.html" class="active">Продукти</a>
+      <a href="admin.html">Администратор</a>
+      <div class="cart-icon" id="cartIcon">🛒<span id="cartCount">0</span></div>
+    </nav>
+  </div>
+</header>
+
+<section class="products">
+  <h2>Нашите продукти</h2>
+
+  <div class="categories">
+    <button class="category-btn active" data-cat="Всички">Всички</button>
+    <button class="category-btn" data-cat="Храна">Храна</button>
+    <button class="category-btn" data-cat="Дрехи">Дрехи</button>
+    <button class="category-btn" data-cat="Играчки">Играчки</button>
+  </div>
+
+  <div id="productList" class="product-list"></div>
+</section>
+
+<footer>
+  <p>© 2025 Paw&Co Grooming Studio | ул. Александър Велики 34, Бургас</p>
+</footer>
+
+<script src="/frontend/js/products.js"></script>
+</body>
+</html>

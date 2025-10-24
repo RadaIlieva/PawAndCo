@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Администратор - Paw&Co</title>
+  <link rel="stylesheet" href="/frontend/css/admin.css">
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="logo-container">
+      <img src="/frontend/images/logo.jpg" alt="Лого" class="logo">
+      <h1>Админ панел - Paw&Co</h1>
+    </div>
+    <nav>
+      <a href="index.html">Начало</a>
+      <a href="products.html">Продукти</a>
+      <a href="admin.html" class="active">Администратор</a>
+    </nav>
+  </div>
+</header>
+
+<main class="admin-main">
+  <div class="admin-buttons">
+    <button id="calendarBtn" class="active">Календар</button>
+    <button id="productsBtn">Продукти</button>
+  </div>
+
+  <!-- КАЛЕНДАР -->
+  <section id="calendarSection" class="calendar-section">
+    <h2>Резервации</h2>
+    <div id="calendar"></div>
+  </section>
+
+  <section id="ordersSection" class="admin-section">
+    <h2>Нови поръчки</h2>
+    <div id="ordersList"></div>
+  </section>
+
+  <!-- ПРОДУКТИ -->
+  <section id="productsSection" class="admin-section hidden">
+    <h2>Управление на продукти</h2>
+
+    <form id="productForm" enctype="multipart/form-data">
+      <input type="hidden" id="editId">
+
+      <label>Име на продукта</label>
+      <input type="text" id="name" required>
+
+      <label>Описание</label>
+      <textarea id="description" required></textarea>
+
+      <label>Категория</label>
+      <select id="category" required>
+        <option value="">-- Избери категория --</option>
+        <option value="Храна">Храна</option>
+        <option value="Дрехи">Дрехи</option>
+        <option value="Играчки">Играчки</option>
+      </select>
+
+      <label>Цена (лв)</label>
+      <input type="number" id="price" required>
+      <p id="eurPrice"></p>
+
+      <label>Снимка</label>
+  <input type="file" id="image" accept=".png,.jpeg,.jpg" required>
+
+      <button type="submit">Добави продукт</button>
+    </form>
+
+    <div id="adminProducts" class="product-list"></div>
+  </section>
+</main>
+
+<script src="/frontend/js/admin.js"></script>
+</body>
+</html>

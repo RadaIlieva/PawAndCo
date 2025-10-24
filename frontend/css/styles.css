@@ -1,0 +1,185 @@
+:root {
+  --light-purple: #e7d6f5;
+  --lavender: #cbb4e9;
+  --dirty-white: #f9f8f7;
+  --dark-purple: #7a52aa;
+  --text-dark: #4a3b6e;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background-color: var(--dirty-white);
+  color: var(--text-dark);
+}
+
+/* 🟣 Хедър */
+header {
+  background: linear-gradient(180deg, var(--lavender), var(--light-purple));
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 30px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Лого и заглавие */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  color: var(--dark-purple);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Навигация */
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: var(--dark-purple);
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+nav a:hover,
+nav a.active {
+  color: #fff;
+}
+
+/* 🟣 Основна секция */
+.main-content {
+  display: flex;
+  justify-content: center;
+  padding: 30px;
+}
+
+.info-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 20px;
+  max-width: 1200px;
+  flex-wrap: wrap;
+}
+
+/* 🗺️ Карта */
+.map-container {
+  flex: 1;
+  min-width: 300px;
+  height: 500px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.map-container iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ℹ️ Контактно поле */
+.contact-box {
+  flex: 0.6;
+  min-width: 260px;
+  background-color: var(--light-purple);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-box h2 {
+  margin-top: 0;
+  color: var(--dark-purple);
+}
+
+.contact-box a {
+  color: var(--dark-purple);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.contact-box a:hover {
+  text-decoration: underline;
+}
+
+/* 🐶 Галерия */
+.gallery-container {
+  flex: 1;
+  min-width: 300px;
+  height: 500px;
+  position: relative;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+.gallery-slider img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+/* 🟣 Footer */
+footer {
+  background: var(--lavender);
+  text-align: center;
+  padding: 15px;
+  color: var(--text-dark);
+  border-top: 3px solid var(--light-purple);
+  margin-top: 40px;
+}
+
+/* 🟣 Responsive стилове */
+@media (max-width: 900px) {
+  .header-content {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav {
+    margin-top: 10px;
+  }
+
+  nav a {
+    margin: 0 10px;
+  }
+
+  .info-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .map-container,
+  .gallery-container {
+    width: 90%; 
+    height: 400px;
+  }
+
+  .contact-box {
+    width: 90%;
+    margin: 15px 0;
+  }
+}

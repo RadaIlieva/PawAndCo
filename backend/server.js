@@ -1,0 +1,27 @@
+import express from "express";
+import cors from "cors"; // добави това
+import dotenv from "dotenv";
+import path from "path";
+import connectDB from "./config/db.js";
+import productRoutes from "./routes/products.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import bookingRoutes from "./routes/bookingRoutes.js";
+
+dotenv.config();
+connectDB();
+
+const app = express();
+
+// 🔹 Разрешаваме CORS за фронтенда
+app.use(cors({
+  origin: "http://127.0.0.1:5500" // адреса, от който зареждаш HTML страницата
+}));
+
+app.use(express.json());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/api/products", productRoutes);
+app.use("/api/orders", orderRoutes);
+app.use("/api/bookings", bookingRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
