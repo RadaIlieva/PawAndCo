@@ -1,7 +1,6 @@
-let bookings = {
-  '2025-10-22': [9, 12, 15],
-  '2025-10-23': [10, 13, 17]
-};
+const API_URL = "http://localhost:5000/api/bookings"; // ✅ Тук посочваме бекенда
+
+let bookings = {};
 
 const calendarContainer = document.querySelector('.calendar-container');
 const calendar = document.getElementById('calendar');
@@ -34,7 +33,26 @@ nextWeekBtn.addEventListener('click', () => {
   renderCalendar();
 });
 
-// Функция за рендериране на календара
+// 🟢 Зареждане на резервациите от бекенда
+async function loadBookings() {
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Неуспешно зареждане на резервации");
+    const data = await res.json();
+
+    bookings = {};
+    data.forEach(b => {
+      if (!bookings[b.date]) bookings[b.date] = [];
+      bookings[b.date].push(b.hour);
+    });
+
+    renderCalendar();
+  } catch (err) {
+    console.error("❌ Грешка при зареждане на резервации:", err);
+  }
+}
+
+// 🗓️ Рендериране на календара
 function renderCalendar() {
   calendar.innerHTML = '';
   const week = [];
@@ -71,25 +89,47 @@ function renderCalendar() {
   });
 }
 
-// Обработка на формата
-document.getElementById('bookingForm').addEventListener('submit', function(e) {
+// 🟢 Изпращане на нова резервация
+document.getElementById('bookingForm').addEventListener('submit', async function (e) {
   e.preventDefault();
+
   if (!selectedDate || !selectedTime) {
     alert('Моля, изберете ден и час!');
     return;
   }
 
-  const owner = document.getElementById('ownerName').value;
-  const dog = document.getElementById('dogName').value;
-  const breed = document.getElementById('breed').value;
-  const phone = document.getElementById('phone').value;
+  const bookingData = {
+    ownerName: document.getElementById('ownerName').value,
+    dogName: document.getElementById('dogName').value,
+    breed: document.getElementById('breed').value,
+    phone: document.getElementById('phone').value,
+    date: selectedDate,
+    hour: selectedTime
+  };
 
-  if (!bookings[selectedDate]) bookings[selectedDate] = [];
-  bookings[selectedDate].push(selectedTime);
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingData)
+    });
 
-  alert(`Резервацията е успешна!\n${owner}, ${dog}, ${breed}, ${phone}\nДата: ${selectedDate}, Час: ${selectedTime}:00`);
+    const result = await res.json();
 
-  selectedHour.textContent = '';
-  this.reset();
-  renderCalendar();
+    if (!res.ok) {
+      alert(result.message || "⚠️ Грешка при създаване на резервация");
+      return;
+    }
+
+    alert("✅ Резервацията е успешна!");
+    this.reset();
+    selectedHour.textContent = '';
+    await loadBookings();
+  } catch (err) {
+    console.error("❌ Грешка при запис:", err);
+    alert("⚠️ Проблем със свързването към сървъра!");
+  }
 });
+
+// 🔄 Зареди резервациите при стартиране
+loadBookings();

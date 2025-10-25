@@ -1,3 +1,69 @@
+
+:root {
+  --light-purple: #e7d6f5;
+  --lavender: #cbb4e9;
+  --dirty-white: #f9f8f7;
+  --dark-purple: #7a52aa;
+  --text-dark: #4a3b6e;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background-color: var(--dirty-white);
+  color: var(--text-dark);
+}
+
+/* 🟣 Хедър */
+header {
+  background: linear-gradient(180deg, var(--lavender), var(--light-purple));
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  padding: 15px 30px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Лого и заглавие */
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  height: 70px;
+  width: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  color: var(--dark-purple);
+  margin: 0;
+  white-space: nowrap;
+}
+
+/* Навигация */
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: var(--dark-purple);
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+nav a:hover,
+nav a.active {
+  color: #fff;
+}
+
 .booking-form {
   max-width: 500px;
   margin: 20px auto;
