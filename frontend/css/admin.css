@@ -149,33 +149,79 @@ nav a.active {
   background-color: #d43a3a;
 }
 
-/* Календар */
-.calendar-section {
+/* ---------- Календар за администратора ---------- */
+#calendar {
   text-align: center;
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-top: 20px;
 }
 
-@media (max-width: 768px) {
-  .header-content {
-    flex-direction: column;
-  }
-  nav {
-    margin-top: 10px;
-  }
-}
-
-.order-item {
-  background: #f9f9f9;
-  border: 1px solid #ddd;
+.calendar-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
   margin-bottom: 10px;
-  padding: 10px;
-  border-radius: 8px;
+  font-weight: bold;
 }
 
-.order-item ul {
-  margin-top: 5px;
-  padding-left: 20px;
+.nav-arrow {
+  cursor: pointer;
+  font-size: 1.4rem;
+  user-select: none;
+  transition: color 0.2s;
+}
+.nav-arrow:hover {
+  color: #6a4fbf;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+.day {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px;
+}
+
+.day h4 {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #3a2a57;
+}
+
+.hour {
+  border-radius: 4px;
+  margin: 3px 0;
+  padding: 5px;
+  background: #d4edda;
+  font-size: 0.85rem;
+}
+
+.hour.booked {
+  background: #f8d7da;
+  color: #721c24;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#bookingDetails {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f7f3ff;
+  border-radius: 8px;
+  border: 1px solid #c9b7ff;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
+.booking-info h3 {
+  color: #6a4fbf;
+  text-align: center;
 }

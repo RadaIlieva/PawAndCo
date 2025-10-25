@@ -170,6 +170,120 @@ async function loadOrders() {
   }
 }
 
+// ---------- КАЛЕНДАР НА РЕЗЕРВАЦИИТЕ ----------
+
+const calendarContainer = document.getElementById("calendar");
+const bookingDetails = document.createElement("div");
+bookingDetails.id = "bookingDetails";
+calendarContainer.after(bookingDetails);
+
+let adminBookings = {};
+let adminWeekStart = new Date();
+
+// 🔹 Зареждане на всички резервации
+async function loadAdminBookings() {
+  try {
+    const res = await fetch("http://localhost:5000/api/bookings");
+    if (!res.ok) throw new Error("Неуспешно зареждане на резервациите");
+    const data = await res.json();
+
+    adminBookings = {};
+    data.forEach(b => {
+      if (!adminBookings[b.date]) adminBookings[b.date] = [];
+      adminBookings[b.date].push(b);
+    });
+
+    renderAdminCalendar();
+  } catch (err) {
+    console.error("Грешка при зареждане на резервации:", err);
+    calendarContainer.innerHTML = "<p>Грешка при зареждане на календара.</p>";
+  }
+}
+
+// 🔸 Рендиране на календара
+function renderAdminCalendar() {
+  calendarContainer.innerHTML = "";
+
+  // 🔹 Контроли за седмицата
+  const navDiv = document.createElement("div");
+  navDiv.classList.add("calendar-nav");
+  navDiv.innerHTML = `
+    <span class="nav-arrow" id="prevWeek">&#8592;</span>
+    <span>Седмица</span>
+    <span class="nav-arrow" id="nextWeek">&#8594;</span>
+  `;
+  calendarContainer.appendChild(navDiv);
+
+  const week = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(adminWeekStart);
+    d.setDate(adminWeekStart.getDate() + i);
+    week.push(d);
+  }
+
+  const calendarGrid = document.createElement("div");
+  calendarGrid.classList.add("calendar-grid");
+
+  week.forEach(day => {
+    const dateStr = day.toISOString().split("T")[0];
+    const dayDiv = document.createElement("div");
+    dayDiv.classList.add("day");
+
+    const options = { weekday: "short", day: "numeric", month: "short" };
+    dayDiv.innerHTML = `<h4>${day.toLocaleDateString("bg-BG", options)}</h4>`;
+
+    for (let hour = 9; hour <= 18; hour++) {
+      const hourDiv = document.createElement("div");
+      hourDiv.classList.add("hour");
+      hourDiv.textContent = `${hour}:00`;
+
+      const bookings = adminBookings[dateStr] || [];
+      const booking = bookings.find(b => b.hour === hour);
+
+      if (booking) {
+        hourDiv.classList.add("booked");
+        hourDiv.addEventListener("click", () => showBookingDetails(booking));
+      }
+
+      dayDiv.appendChild(hourDiv);
+    }
+
+    calendarGrid.appendChild(dayDiv);
+  });
+
+  calendarContainer.appendChild(calendarGrid);
+
+  // 🔹 Навигация
+  document.getElementById("prevWeek").addEventListener("click", () => {
+    adminWeekStart.setDate(adminWeekStart.getDate() - 7);
+    renderAdminCalendar();
+  });
+
+  document.getElementById("nextWeek").addEventListener("click", () => {
+    adminWeekStart.setDate(adminWeekStart.getDate() + 7);
+    renderAdminCalendar();
+  });
+}
+
+// 🔸 Показване на детайли под календара
+function showBookingDetails(booking) {
+  bookingDetails.innerHTML = `
+    <div class="booking-info">
+      <h3>📋 Детайли за резервацията</h3>
+      <p><b>Дата:</b> ${booking.date}</p>
+      <p><b>Час:</b> ${booking.hour}:00</p>
+      <p><b>Собственик:</b> ${booking.ownerName}</p>
+      <p><b>Куче:</b> ${booking.dogName}</p>
+      <p><b>Порода:</b> ${booking.breed}</p>
+      <p><b>Телефон:</b> ${booking.phone}</p>
+    </div>
+  `;
+}
+
+// 🔁 Зареждане при стартиране
+loadAdminBookings();
+
+
 
 // Автоматично обновяване на поръчките на всеки 10 секунди
 setInterval(loadOrders, 10000);
