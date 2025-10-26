@@ -183,3 +183,152 @@ footer {
     margin: 15px 0;
   }
 }
+
+
+/* 🟣 Резервационна секция */
+.rezervation {
+  position: relative;
+  width: 100%;
+  height: 90vh;
+  overflow: hidden;
+}
+
+.rezervation img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.rezervation .rez-btn {
+  position: absolute;
+  top: 50%;
+  right: 8%;
+  transform: translateY(-50%);
+  background-color: var(--dark-purple);
+  color: #fff;
+  padding: 15px 30px;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.3s;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+}
+
+.rezervation .rez-btn:hover {
+  background-color: #9a6cd8;
+  transform: translateY(-50%) scale(1.05);
+}
+
+.salon-gallery {
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 50px 60px;
+  margin: 60px auto;
+  max-width: 1200px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.salon-gallery-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+/* 🐾 Лява текстова част */
+.salon-info {
+  flex: 1;
+  color: var(--text-dark);
+}
+
+.salon-info h3 {
+  font-size: 1.7rem;
+  color: var(--dark-purple);
+  margin-bottom: 15px;
+}
+
+.salon-info p {
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.salon-info h4 {
+  color: var(--dark-purple);
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.advantages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.advantage-box {
+  background-color: var(--light-purple);
+  border-radius: 12px;
+  padding: 15px;
+  flex: 1 1 30%;
+  min-width: 180px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s;
+}
+
+.advantage-box:hover {
+  transform: translateY(-5px);
+}
+
+.advantage-box h5 {
+  color: var(--dark-purple);
+  margin-bottom: 8px;
+}
+
+/* 🐶 Дясна снимкова част */
+.salon-image-box {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.salon-frame {
+  background-color: #f3edea;
+  border-radius: 25px;
+  padding: 25px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}
+
+.salon-frame img {
+  width: 100%;
+  border-radius: 15px;
+  object-fit: cover;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* 📱 Responsive */
+@media (max-width: 900px) {
+  .salon-gallery-container {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .salon-frame {
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .advantages {
+    justify-content: center;
+  }
+
+  .advantage-box {
+    flex: 1 1 45%;
+  }
+}

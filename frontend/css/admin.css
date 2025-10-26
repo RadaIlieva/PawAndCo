@@ -225,3 +225,99 @@ nav a.active {
   color: #6a4fbf;
   text-align: center;
 }
+
+
+/* ---------- Поръчки ---------- */
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.order-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-left: 5px solid #9d84f3;
+}
+
+.order-card h3 {
+  margin-top: 0;
+  color: #6a4fbf;
+}
+
+.order-card ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.complete-btn {
+  background-color: #9d84f3;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.complete-btn:hover {
+  background-color: #7a5cf1;
+}
+
+/* ---------- Статуси на Поръчките ---------- */
+
+.order-item {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    /* Базов стил, който ще бъде променен от класовете за статус */
+    border-left: 5px solid #ccc; 
+}
+
+/* Статус: Изчакване / Нов (Внимание, спешна обработка) */
+.order-item.status-изчакване {
+    border-left-color: #f44336; /* Червено */
+    background-color: #fcebeb; /* Много светъл червен фон */
+}
+
+/* Статус: Опакована (В процес на обработка) */
+.order-item.status-опакована {
+    border-left-color: #ff9800; /* Оранжево */
+    background-color: #fff8e1; 
+}
+
+/* Статус: Изпратена (На път към клиента) */
+.order-item.status-изпратена {
+    border-left-color: #2196f3; /* Синьо */
+    background-color: #e3f2fd;
+}
+
+/* Статус: Получена (Завършена, готова за изтриване) */
+.order-item.status-получена {
+    border-left-color: #4CAF50; /* Зелено */
+    background-color: #e8f5e9; /* Светло зелен фон */
+}
+
+/* Може да добавите стилове и за бутоните в зависимост от статуса */
+.order-item .btn-group button {
+    margin-right: 5px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Допълнителни стилове за бутоните (за по-добра визия) */
+.order-item .btn-group button:nth-child(1) { background-color: #ff9800; /* Опакована */ }
+.order-item .btn-group button:nth-child(2) { background-color: #2196f3; /* Изпратена */ }
+.order-item .btn-group button:nth-child(3) { background-color: #4CAF50; /* Получена */ }
+.order-item .btn-group .delete-btn { background-color: #f56262; /* Изтрий */ }
