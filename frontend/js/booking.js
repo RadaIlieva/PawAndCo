@@ -1,6 +1,9 @@
-const API_URL = "http://localhost:5000/api/bookings"; // ✅ Тук посочваме бекенда
+const API_URL = "http://localhost:5000/api/bookings";
 
 let bookings = {};
+let selectedDate = "";
+let selectedTime = "";
+let weekStart = new Date();
 
 const calendarContainer = document.querySelector('.calendar-container');
 const calendar = document.getElementById('calendar');
@@ -9,16 +12,10 @@ const selectedHour = document.getElementById('selectedHour');
 const prevWeekBtn = document.getElementById('prevWeek');
 const nextWeekBtn = document.getElementById('nextWeek');
 
-let selectedDate = '';
-let selectedTime = '';
-let weekStart = new Date();
-
 // Показване/скриване на календара
 showCalendarBtn.addEventListener('click', () => {
   calendarContainer.style.display =
-    calendarContainer.style.display === 'grid' || calendarContainer.style.display === 'block'
-      ? 'none'
-      : 'block';
+    calendarContainer.style.display === 'block' ? 'none' : 'block';
   if (calendarContainer.style.display === 'block') renderCalendar();
 });
 
@@ -27,20 +24,20 @@ prevWeekBtn.addEventListener('click', () => {
   weekStart.setDate(weekStart.getDate() - 7);
   renderCalendar();
 });
-
 nextWeekBtn.addEventListener('click', () => {
   weekStart.setDate(weekStart.getDate() + 7);
   renderCalendar();
 });
 
-// 🟢 Зареждане на резервациите от бекенда
+// Зареждане на резервации
 async function loadBookings() {
   try {
     const res = await fetch(API_URL);
-    if (!res.ok) throw new Error("Неуспешно зареждане на резервации");
-    const data = await res.json();
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
+    const data = await res.json();
     bookings = {};
+
     data.forEach(b => {
       if (!bookings[b.date]) bookings[b.date] = [];
       bookings[b.date].push(b.hour);
@@ -52,10 +49,11 @@ async function loadBookings() {
   }
 }
 
-// 🗓️ Рендериране на календара
+// Рендериране на календара
 function renderCalendar() {
-  calendar.innerHTML = '';
+  calendar.innerHTML = "";
   const week = [];
+
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart);
     d.setDate(weekStart.getDate() + i);
@@ -72,6 +70,7 @@ function renderCalendar() {
       const hourDiv = document.createElement('div');
       hourDiv.classList.add('hour');
       hourDiv.textContent = `${hour}:00`;
+
       const dateStr = day.toISOString().split('T')[0];
 
       if (bookings[dateStr] && bookings[dateStr].includes(hour)) {
@@ -83,18 +82,20 @@ function renderCalendar() {
           selectedHour.textContent = `Избрахте ${selectedDate} в ${selectedTime}:00`;
         });
       }
+
       dayDiv.appendChild(hourDiv);
     }
+
     calendar.appendChild(dayDiv);
   });
 }
 
-// 🟢 Изпращане на нова резервация
-document.getElementById('bookingForm').addEventListener('submit', async function (e) {
+// Изпращане на резервация
+document.getElementById('bookingForm').addEventListener('submit', async e => {
   e.preventDefault();
 
   if (!selectedDate || !selectedTime) {
-    alert('Моля, изберете ден и час!');
+    alert("Моля, изберете ден и час!");
     return;
   }
 
@@ -107,6 +108,8 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     hour: selectedTime
   };
 
+  console.log("📤 Изпращам резервация:", bookingData);
+
   try {
     const res = await fetch(API_URL, {
       method: "POST",
@@ -115,6 +118,7 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     });
 
     const result = await res.json();
+    console.log("📥 Отговор:", result);
 
     if (!res.ok) {
       alert(result.message || "⚠️ Грешка при създаване на резервация");
@@ -122,7 +126,7 @@ document.getElementById('bookingForm').addEventListener('submit', async function
     }
 
     alert("✅ Резервацията е успешна!");
-    this.reset();
+    e.target.reset();
     selectedHour.textContent = '';
     await loadBookings();
   } catch (err) {
@@ -131,5 +135,4 @@ document.getElementById('bookingForm').addEventListener('submit', async function
   }
 });
 
-// 🔄 Зареди резервациите при стартиране
 loadBookings();
