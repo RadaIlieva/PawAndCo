@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Администратор - Paw&Co</title>
     <link rel="stylesheet" href="/frontend/css/admin.css">
+    <style>
+        .hidden { display: none; }
+        .admin-main { margin-top: 20px; }
+    </style>
 </head>
 <body>
 
@@ -23,58 +27,69 @@
 </header>
 
 <main class="admin-main">
-    <div class="admin-buttons">
-        <button id="calendarBtn" class="active">Календар</button>
-        <button id="ordersBtn">Поръчки</button>
-        <button id="productsBtn">Продукти</button>
-    </div>
 
-    <section id="calendarSection" class="admin-section">
-        <h2>Резервации</h2>
-        <div id="calendar"></div>
-    </section>
-
-    <section id="ordersSection" class="admin-section hidden">
-        <h2>Нови поръчки</h2>
-
-        
-        <div id="ordersList" class="orders-grid"></div>
-    </section>
-
-    <section id="productsSection" class="admin-section hidden">
-        <h2>Управление на продукти</h2>
-
-        <form id="productForm" enctype="multipart/form-data">
-            <input type="hidden" id="editId">
-
-            <label>Име на продукта</label>
-            <input type="text" id="name" required>
-
-            <label>Описание</label>
-            <textarea id="description" required></textarea>
-
-            <label>Категория</label>
-            <select id="category" required>
-                <option value="">-- Избери категория --</option>
-                <option value="Храна">Храна</option>
-                <option value="Дрехи">Дрехи</option>
-                <option value="Играчки">Играчки</option>
-            </select>
-
-            <label>Цена (лв)</label>
-            <input type="number" id="price" required>
-            <p id="eurPrice"></p>
-
-            <label>Снимка</label>
-            <input type="file" id="image" accept=".png,.jpeg,.jpg" required>
-
-            <button type="submit">Добави продукт</button>
+    <!-- ====== LOGIN FORM ====== -->
+    <section id="loginSection">
+        <h2>Вход за администратор</h2>
+        <form id="loginForm">
+            <label>Потребителско име</label>
+            <input type="text" id="username" required>
+            <label>Парола</label>
+            <input type="password" id="password" required>
+            <button type="submit">Вход</button>
         </form>
+        <p id="loginMessage"></p>
+    </section>
 
-        <div id="adminProducts" class="product-list"></div>
+    <!-- ====== ADMIN PANEL ====== -->
+    <section id="adminPanel" class="hidden">
+        <div class="admin-buttons">
+            <button id="calendarBtn" class="active">Календар</button>
+            <button id="ordersBtn">Поръчки</button>
+            <button id="productsBtn">Продукти</button>
+        </div>
+
+        <section id="calendarSection" class="admin-section">
+            <h2>Резервации</h2>
+            <div id="calendar"></div>
+        </section>
+
+        <section id="ordersSection" class="admin-section hidden">
+            <h2>Нови поръчки</h2>
+            <div id="ordersList" class="orders-grid"></div>
+        </section>
+
+        <section id="productsSection" class="admin-section hidden">
+            <h2>Управление на продукти</h2>
+            <form id="productForm" enctype="multipart/form-data">
+                <input type="hidden" id="editId">
+                <label>Име на продукта</label>
+                <input type="text" id="name" required>
+                <label>Описание</label>
+                <textarea id="description" required></textarea>
+                <label>Категория</label>
+                <select id="category" required>
+                    <option value="">-- Избери категория --</option>
+                    <option value="Храна">Храна</option>
+                    <option value="Дрехи">Дрехи</option>
+                    <option value="Играчки">Играчки</option>
+                </select>
+                <label>Цена (лв)</label>
+                <input type="number" id="price" required>
+                <p id="eurPrice"></p>
+                <label>Снимка</label>
+                <input type="file" id="image" accept=".png,.jpeg,.jpg" required>
+                <button type="submit">Добави продукт</button>
+            </form>
+            <div id="adminProducts" class="product-list"></div>
+        </section>
     </section>
 </main>
 
 <script src="/frontend/js/admin.js"></script>
+<script src="/frontend/js/services/calendarService.js"></script>
+<script src="/frontend/js/services/orderService.js"></script>
+<script src="/frontend/js/services/productService.js"></script>
+
 </body>
 </html>
