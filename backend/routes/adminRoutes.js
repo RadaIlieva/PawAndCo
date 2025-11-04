@@ -1,15 +1,11 @@
 import express from "express";
-import { createAdmin, loginAdmin } from "../controllers/AdminController.js";
-import { verifyAdmin } from "../middleware/authMiddleware.js";
+import { loginAdmin, createAdmin, verifyAdminToken } from "../controllers/AdminController.js";
+import { verifyAdmin } from "../middleware/verifyAdmin.js";
 
 const router = express.Router();
 
-router.post("/create", createAdmin); // създава се само веднъж
 router.post("/login", loginAdmin);
-
-// пример за защитен маршрут
-router.get("/dashboard", verifyAdmin, (req, res) => {
-  res.json({ message: "Добре дошъл, администратор!" });
-});
+router.post("/create", createAdmin);
+router.get("/verify", verifyAdmin, verifyAdminToken);
 
 export default router;

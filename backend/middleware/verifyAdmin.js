@@ -21,7 +21,7 @@ export const verifyAdmin = (req, res, next) => {
 
     req.admin = decoded;
     next();
-  } catch {
+  } catch (err) {
     return res.status(401).json({ message: "❌ Невалиден токен." });
   }
 };

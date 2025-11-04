@@ -1,46 +1,33 @@
 import Booking from "../models/Booking.js";
 
-// ✅ Функция за проверка на имейл
-const isValidEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
 // ✅ Функция за проверка на телефон (формат: само цифри, минимум 9 цифри)
 const isValidPhone = (phone) => {
-  const phoneRegex = /^[0-9]{9,15}$/; // може да промениш обхвата, ако искаш
+  const phoneRegex = /^[0-9]{9,15}$/;
   return phoneRegex.test(phone);
 };
 
 // 📅 Клиент: прави нова резервация
 export const createBooking = async (req, res) => {
   try {
-    const { name, email, phone, date, hour } = req.body;
+    const { ownerName, dogName, breed, phone, date, hour } = req.body;
 
-    // 🔹 Проверка за празни полета
-    if (!name || !email || !phone || !date || !hour) {
+    if (!ownerName || !dogName || !breed || !phone || !date || !hour) {
       return res.status(400).json({ message: "❌ Моля, попълнете всички полета." });
     }
 
-    // 🔹 Проверка за имейл и телефон
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ message: "❌ Невалиден имейл адрес." });
-    }
     if (!isValidPhone(phone)) {
       return res.status(400).json({ message: "❌ Невалиден телефонен номер. Въведете само цифри." });
     }
 
-    // 🔹 Проверка дали часът вече е зает
     const existing = await Booking.findOne({ date, hour });
     if (existing) {
       return res.status(400).json({ message: "❌ Този час вече е зает." });
     }
 
-    // 🔹 Създаване на резервация
-    const booking = new Booking({ name, email, phone, date, hour });
+    const booking = new Booking({ ownerName, dogName, breed, phone, date, hour });
     await booking.save();
 
-    res.status(201).json({ message: "✅ Резервацията е създадена успешно!" });
+    res.status(201).json({ message: "✅ Резервацията е създадена успешно!", booking });
   } catch (error) {
     res.status(500).json({ message: "⚠️ Грешка при създаване на резервация", error: error.message });
   }
@@ -49,15 +36,10 @@ export const createBooking = async (req, res) => {
 // 🧑‍💼 Админ: добавя нова резервация ръчно
 export const createBookingAdmin = async (req, res) => {
   try {
-    const { name, email, phone, date, hour } = req.body;
+    const { ownerName, dogName, breed, phone, date, hour } = req.body;
 
-    // 🔹 Проверки (валидност + задължителни полета)
-    if (!name || !email || !phone || !date || !hour) {
+    if (!ownerName || !dogName || !breed || !phone || !date || !hour) {
       return res.status(400).json({ message: "❌ Моля, попълнете всички задължителни полета." });
-    }
-
-    if (!isValidEmail(email)) {
-      return res.status(400).json({ message: "❌ Невалиден имейл адрес." });
     }
 
     if (!isValidPhone(phone)) {
@@ -69,7 +51,7 @@ export const createBookingAdmin = async (req, res) => {
       return res.status(400).json({ message: "❌ Този час вече е зает." });
     }
 
-    const booking = new Booking({ name, email, phone, date, hour });
+    const booking = new Booking({ ownerName, dogName, breed, phone, date, hour });
     await booking.save();
 
     res.status(201).json(booking);
@@ -88,19 +70,57 @@ export const getBookings = async (req, res) => {
   }
 };
 
-// ✏️ Обновяване на резервация (може да се променя само дата или час)
+// ✏️ Редактиране на резервация (ПОПРАВЕНО)
 export const updateBooking = async (req, res) => {
   try {
     const { id } = req.params;
-    const { date, hour } = req.body;
+    const { ownerName, dogName, breed, phone, date, hour } = req.body;
 
-    if (!date && !hour) {
-      return res.status(400).json({ message: "❌ Моля, въведете нова дата или час за промяна." });
+    // Проверка дали има поне едно поле за промяна
+    if (!ownerName && !dogName && !breed && !phone && !date && !hour) {
+      return res.status(400).json({ message: "❌ Моля, въведете поне едно поле за промяна." });
     }
 
+    // Ако има телефон, валидираме
+    if (phone && !isValidPhone(phone)) {
+      return res.status(400).json({ message: "❌ Невалиден телефонен номер. Използвайте само цифри." });
+    }
+
+    // 🔥 КРИТИЧНА ПРОВЕРКА: Ако се променя дата/час, проверяваме конфликт
+    if (date || hour) {
+      const currentBooking = await Booking.findById(id);
+      if (!currentBooking) {
+        return res.status(404).json({ message: "❌ Резервацията не е намерена." });
+      }
+
+      const newDate = date || currentBooking.date;
+      const newHour = hour !== undefined ? hour : currentBooking.hour;
+
+      // Проверяваме дали новата дата/час е заета от ДРУГА резервация
+      const conflict = await Booking.findOne({ 
+        date: newDate, 
+        hour: newHour,
+        _id: { $ne: id } // изключваме текущата резервация
+      });
+
+      if (conflict) {
+        return res.status(400).json({ 
+          message: `❌ Часът ${newHour}:00 на ${newDate} вече е зает от друга резервация.` 
+        });
+      }
+    }
+
+    // Обновяваме резервацията
     const updated = await Booking.findByIdAndUpdate(
       id,
-      { ...(date && { date }), ...(hour && { hour }) },
+      { 
+        ...(ownerName && { ownerName }), 
+        ...(dogName && { dogName }), 
+        ...(breed && { breed }),
+        ...(phone && { phone }), 
+        ...(date && { date }), 
+        ...(hour !== undefined && { hour })
+      },
       { new: true }
     );
 

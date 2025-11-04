@@ -8,23 +8,42 @@ if (calendarContainer) calendarContainer.after(bookingDetails);
 let adminBookings = {};
 let adminWeekStart = new Date();
 
+// ----------- ИЗТРИВАНЕ НА РЕЗЕРВАЦИЯ -----------
 window.deleteBooking = async function (id) {
     if (!confirm("Сигурни ли сте, че искате да изтриете тази резервация?")) return;
     try {
-        const res = await fetch(`http://localhost:5000/api/bookings/${id}`, { method: "DELETE" });
-        if (!res.ok) throw new Error("Грешка при изтриване.");
+        const res = await fetch(`http://localhost:5000/api/bookings/${id}`, { 
+            method: "DELETE",
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+            }
+        });
+        
+        if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.message || "Грешка при изтриване.");
+        }
+        
         alert("🗑️ Резервацията е изтрита успешно!");
-        loadAdminBookings();
+        await loadAdminBookings();
         bookingDetails.innerHTML = "";
     } catch (err) {
-        alert(err.message);
+        console.error("Delete error:", err);
+        alert("⚠️ " + err.message);
     }
 };
 
+// ----------- ЗАРЕЖДАНЕ НА РЕЗЕРВАЦИИ -----------
 async function loadAdminBookings() {
     try {
-        const res = await fetch("http://localhost:5000/api/bookings");
+        const res = await fetch("http://localhost:5000/api/bookings", {
+            headers: {
+                'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+            }
+        });
+        
         if (!res.ok) throw new Error("Неуспешно зареждане на резервации");
+        
         const data = await res.json();
         adminBookings = {};
         data.forEach(b => {
@@ -33,15 +52,17 @@ async function loadAdminBookings() {
         });
         renderAdminCalendar();
     } catch (err) {
-        console.error(err);
+        console.error("Load error:", err);
         calendarContainer.innerHTML = "<p>Грешка при зареждане на календара.</p>";
     }
 }
 
+// ----------- РЕНДЕР НА КАЛЕНДАРА -----------
 function renderAdminCalendar() {
     if (!calendarContainer) return;
     calendarContainer.innerHTML = "";
 
+    // Навигация
     const navDiv = document.createElement("div");
     navDiv.classList.add("calendar-nav");
     navDiv.innerHTML = `
@@ -51,6 +72,7 @@ function renderAdminCalendar() {
     `;
     calendarContainer.appendChild(navDiv);
 
+    // Седмица
     const week = [];
     for (let i = 0; i < 7; i++) {
         const d = new Date(adminWeekStart);
@@ -58,6 +80,7 @@ function renderAdminCalendar() {
         week.push(d);
     }
 
+    // Създаване на grid
     const grid = document.createElement("div");
     grid.classList.add("calendar-grid");
 
@@ -78,7 +101,7 @@ function renderAdminCalendar() {
                 hourDiv.classList.add("booked");
                 hourDiv.addEventListener("click", () => showBookingDetails(booking));
             } else {
-                hourDiv.addEventListener("click", () => showAddBookingForm(dateStr, hour));
+                hourDiv.addEventListener("click", () => handleHourClick(dateStr, hour));
             }
             dayDiv.appendChild(hourDiv);
         }
@@ -86,12 +109,15 @@ function renderAdminCalendar() {
     });
 
     calendarContainer.appendChild(grid);
+
+    // Бутон за добавяне
     const addBtn = document.createElement("button");
     addBtn.textContent = "➕ Добави нов час";
     addBtn.classList.add("add-booking-btn");
     addBtn.addEventListener("click", () => showAddBookingForm());
     calendarContainer.appendChild(addBtn);
 
+    // Навигация седмици
     document.getElementById("prevWeek").addEventListener("click", () => {
         adminWeekStart.setDate(adminWeekStart.getDate() - 7);
         renderAdminCalendar();
@@ -102,6 +128,7 @@ function renderAdminCalendar() {
     });
 }
 
+// ----------- ПОКАЗВАНЕ НА ДЕТАЙЛИ -----------
 function showBookingDetails(booking) {
     bookingDetails.innerHTML = `
         <div class="booking-info">
@@ -120,6 +147,7 @@ function showBookingDetails(booking) {
     `;
 }
 
+// ----------- ДОБАВЯНЕ НА РЕЗЕРВАЦИЯ -----------
 function showAddBookingForm(date = "", hour = "") {
     const today = new Date().toISOString().split("T")[0];
     bookingDetails.innerHTML = `
@@ -154,10 +182,18 @@ function showAddBookingForm(date = "", hour = "") {
             phone: document.getElementById("newPhone").value
         };
 
+        if (!newBooking.ownerName || !newBooking.dogName || !newBooking.breed || !newBooking.phone) {
+            alert("⚠️ Моля, попълнете всички полета.");
+            return;
+        }
+
         try {
             const res = await fetch("http://localhost:5000/api/bookings/admin", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                },
                 body: JSON.stringify(newBooking)
             });
 
@@ -165,57 +201,74 @@ function showAddBookingForm(date = "", hour = "") {
             if (!res.ok) throw new Error(data.message || "Грешка при създаване на резервация.");
 
             alert("✅ Новият час е добавен успешно!");
-            loadAdminBookings();
+            await loadAdminBookings();
+            bookingDetails.innerHTML = "";
         } catch (err) {
+            console.error("Add booking error:", err);
             alert("⚠️ " + err.message);
         }
     });
 }
 
+// ----------- РЕДАКТИРАНЕ НА РЕЗЕРВАЦИЯ -----------
+let currentEditingBooking = null;
+
 window.editBooking = function (id) {
     const booking = Object.values(adminBookings).flat().find(b => b._id === id);
     if (!booking) return alert("❌ Резервацията не е намерена.");
 
+    currentEditingBooking = booking;
+
     bookingDetails.innerHTML = `
-        <div class="booking-edit-form">
-            <h3>✏️ Промяна на ден и час</h3>
-            <label>Дата:</label>
-            <input type="date" id="editDate" value="${booking.date}" required>
-
-            <label>Час:</label>
-            <input type="number" id="editHour" value="${booking.hour}" min="9" max="18" required>
-
-            <div class="btn-group">
-                <button id="saveEditBooking">💾 Запази</button>
-                <button onclick="loadAdminBookings()">❌ Отказ</button>
-            </div>
+        <div class="booking-edit-info">
+            <h3>✏️ Редактиране на резервация</h3>
+            <p><b>Собственик:</b> ${booking.ownerName}</p>
+            <p><b>Куче:</b> ${booking.dogName}</p>
+            <p><b>Порода:</b> ${booking.breed}</p>
+            <p><b>Телефон:</b> ${booking.phone}</p>
+            <p>📅 Изберете нов ден и час от календара.</p>
+            <button onclick="cancelEdit()">❌ Отказ</button>
         </div>
     `;
 
-    document.getElementById("saveEditBooking").addEventListener("click", async () => {
-        const newDate = document.getElementById("editDate").value;
-        const newHour = Number(document.getElementById("editHour").value);
+    alert("Изберете нов свободен час от календара, за да преместите резервацията.");
+};
 
-        if (!newDate || !newHour) {
-            alert("⚠️ Моля, попълнете дата и час.");
-            return;
-        }
-
+// ----------- КЛИК ВЪРХУ ЧАС (използва се и при редактиране) -----------
+async function handleHourClick(date, hour) {
+    if (currentEditingBooking) {
+        // редактиране на вече съществуваща резервация
         try {
-            const res = await fetch(`http://localhost:5000/api/bookings/${id}`, {
+            const res = await fetch(`http://localhost:5000/api/bookings/${currentEditingBooking._id}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ date: newDate, hour: newHour })
+                headers: { 
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+                },
+                body: JSON.stringify({ date, hour })
             });
 
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Грешка при обновяване.");
 
-            alert("✅ Резервацията е променена успешно!");
-            loadAdminBookings();
+            alert("✅ Резервацията беше преместена успешно!");
+            currentEditingBooking = null;
+            await loadAdminBookings();
             bookingDetails.innerHTML = "";
         } catch (err) {
+            console.error("Update booking error:", err);
             alert("⚠️ " + err.message);
         }
-    });
+    } else {
+        // добавяне на нова резервация
+        showAddBookingForm(date, hour);
+    }
+}
+
+window.cancelEdit = function () {
+    currentEditingBooking = null;
+    bookingDetails.innerHTML = "";
 };
+
+// ----------- ЗАРЕЖДАНЕ НА ПЪРВОНАЧАЛНИ РЕЗЕРВАЦИИ -----------
+loadAdminBookings();

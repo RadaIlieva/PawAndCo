@@ -2,9 +2,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Admin from "../models/Admin.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret"; // по-добре сложи в .env
+const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
-// 🟢 Създаване на админ (само веднъж)
+// 🟢 Създаване на админ
 export const createAdmin = async (req, res) => {
   try {
     const existingAdmin = await Admin.findOne({});
@@ -38,15 +38,17 @@ export const loginAdmin = async (req, res) => {
       return res.status(400).json({ message: "Невалидна парола." });
     }
 
-    const token = jwt.sign(
-      { id: admin._id, role: "admin" },
-      JWT_SECRET,
-      { expiresIn: "2h" }
-    );
+    // Без време на изтичане
+    const token = jwt.sign({ id: admin._id, role: "admin" }, JWT_SECRET);
 
     res.json({ message: "✅ Успешен вход!", token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Грешка при вход." });
   }
+};
+
+// 🧾 Проверка дали токенът е валиден
+export const verifyAdminToken = async (req, res) => {
+  res.json({ valid: true });
 };

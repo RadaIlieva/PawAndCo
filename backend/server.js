@@ -1,8 +1,9 @@
 import express from "express";
-import cors from "cors"; 
+import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import connectDB from "./config/db.js";
+
 import product from "./routes/products.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import bookingRoutes from "./routes/bookingRoutes.js";
@@ -13,13 +14,13 @@ connectDB();
 
 const app = express();
 
-// 🟢 ЗАДЪЛЖИТЕЛНО ПРЕДИ РУТОВЕТЕ
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ✅ позволяваме PATCH и Authorization хедъра
 app.use(cors({
   origin: "http://127.0.0.1:5500",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 

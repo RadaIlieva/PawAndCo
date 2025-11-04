@@ -6,6 +6,7 @@ import {
   updateBooking, 
   deleteBooking 
 } from "../controllers/BookingController.js";
+import { verifyAdmin } from "../middleware/verifyAdmin.js";
 
 const router = express.Router();
 
@@ -13,9 +14,9 @@ const router = express.Router();
 router.post("/", createBooking);
 
 // 🧑‍💼 Администратор
-router.post("/admin", createBookingAdmin);
-router.get("/", getBookings);
-router.patch("/:id", updateBooking);
-router.delete("/:id", deleteBooking);
+router.post("/admin", verifyAdmin, createBookingAdmin);
+router.get("/", verifyAdmin, getBookings);
+router.patch("/:id", verifyAdmin, updateBooking);
+router.delete("/:id", verifyAdmin, deleteBooking);
 
 export default router;
