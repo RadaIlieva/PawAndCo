@@ -2,11 +2,10 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  description: { type: String, required: true },
-  category: { type: String, enum: ["Храна", "Дрехи", "Играчки"], required: true },
+  description: String,
+  category: String,
   priceBGN: { type: Number, required: true },
-  priceEUR: { type: Number },
-  image: { type: String, required: true }
+  image: String
 });
 
 productSchema.pre("save", function(next) {

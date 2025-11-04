@@ -18,7 +18,8 @@ if (form) form.addEventListener("submit", async (e) => {
     formData.append("name", nameInput.value);
     formData.append("description", descriptionInput.value);
     formData.append("category", categoryInput.value);
-    formData.append("priceBGN", priceInput.value);
+    formData.append("priceBGN", parseFloat(priceInput.value).toFixed(2));
+
     if (imageInput.files[0]) formData.append("image", imageInput.files[0]);
 
     const url = editIdInput.value
@@ -105,4 +106,4 @@ window.deleteProduct = async function (id) {
 };
 
 // Зареждане на продуктите при стартиране на страницата
-document.addEventListener("DOMContentLoaded", loadProducts);
+document.addEventListener("DOMContentLoaded", loadProducts);а

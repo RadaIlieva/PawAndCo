@@ -43,7 +43,31 @@ function addToCart(product) {
   const existing = cart.find((p) => p._id === product._id);
   if (existing) existing.quantity++;
   else cart.push({ ...product, quantity: 1 });
+
   updateCartIcon();
+
+  // ✅ Показване на плаващо съобщение
+  showCartMessage(`${product.name} е добавен в количката 🛒`);
+}
+
+// 🔹 Плаващо съобщение при добавяне
+function showCartMessage(message) {
+  const msg = document.createElement("div");
+  msg.textContent = message;
+  msg.classList.add("cart-popup");
+
+  document.body.appendChild(msg);
+
+  // Анимация за появяване
+  setTimeout(() => {
+    msg.classList.add("visible");
+  }, 100);
+
+  // Изчезване след 2 сек.
+  setTimeout(() => {
+    msg.classList.remove("visible");
+    setTimeout(() => msg.remove(), 500);
+  }, 2000);
 }
 
 // 🔹 Обновяване на иконата
@@ -130,12 +154,17 @@ function openOrderForm() {
         <input type="text" id="customerAddress" placeholder="Въведете адрес или офис">
       </div>
 
+      <div class="note-container">
+        <textarea id="customerNote" placeholder="Бележка към поръчката (например цвят, размер и др.)"></textarea>
+      </div>
+
       <div class="form-buttons">
         <button id="submitOrder" class="primary-btn">Изпрати поръчката</button>
         <button id="cancelOrder" class="secondary-btn">Откажи</button>
       </div>
     </div>
   `;
+
 
   // Placeholder за адрес според опцията
   const deliveryRadios = document.querySelectorAll('input[name="deliveryType"]');
@@ -160,6 +189,7 @@ async function submitOrder() {
   const address = document.getElementById("customerAddress").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
+  const note = document.getElementById("customerNote").value.trim(); // 🆕 взимаме бележката
 
   if (!name || !address || !phone || !email) {
     alert("Моля, попълнете всички полета!");
@@ -173,6 +203,7 @@ async function submitOrder() {
     customerAddress: address,
     customerPhone: phone,
     customerEmail: email,
+    note, // 🆕 добавяме бележката
     products: cart.map((p) => ({
       name: p.name,
       priceBGN: p.priceBGN,

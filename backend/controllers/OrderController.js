@@ -14,6 +14,7 @@ export const getOrders = async (req, res) => {
 // Създаване на нова поръчка
 export const createOrder = async (req, res) => {
   try {
+    // В req.body идват всички данни, включително note
     const newOrder = new Order(req.body);
     await newOrder.save();
     res.status(201).json(newOrder);

@@ -11,7 +11,8 @@ export const getProducts = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
-    const { name, description, category, priceBGN } = req.body;
+    const { name, description, category } = req.body;
+    const priceBGN = parseFloat(req.body.priceBGN);
     const image = req.file ? "/uploads/" + req.file.filename : null;
     const product = new Product({ name, description, category, priceBGN, image });
     await product.save();

@@ -6,6 +6,7 @@ const orderSchema = new mongoose.Schema({
   customerPhone: String,
   customerEmail: String,
   customerAddress: String,
+  note: String, 
   products: [{ name: String, priceBGN: Number, quantity: Number, image: String }],
   totalPrice: Number,
   status: { type: String, default: "изчакване" },
