@@ -27,27 +27,26 @@ app.use(
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
+app.use(express.static(path.join(process.cwd(), "frontend")));
 
 app.use("/api/products", product);
 app.use("/api/orders", orderRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Внимавайте: Промених app.get("/") по-долу, за да е последният Catch-All.
-// Този get остава само за показване на съобщение за успешно стартиране на сървъра.
-app.get("/backend-status", (req, res) => {
-  res.send("🐾 Paw&Co backend is running successfully!");
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(process.cwd(), "frontend", "html", "index.html"));
 });
 
-const __dirname = path.resolve();
+app.get('/:page', (req, res) => {
+    const requestedPage = req.params.page;
+    if (requestedPage.endsWith('.html')) {
+        return res.sendFile(path.join(process.cwd(), "frontend", "html", requestedPage));
+    }
+    res.status(404).send('Page not found.');
+});
 
-// Обслужване на статични файлове: Търси в public/build
-app.use(express.static(path.join(__dirname, "public", "build")));
-
-// Най-финална корекция за Render: app.get('/', ...) обикновено замества '/*'
-app.get('/', (req, res) =>
-  res.sendFile(path.resolve(__dirname, "public", "build", "index.html"))
-);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
