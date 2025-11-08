@@ -18,11 +18,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
-  cors({
-    origin: "*", 
-    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  cors({
+    origin: "*", 
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
 );
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
@@ -34,19 +34,20 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
-  res.send("🐾 Paw&Co backend is running successfully!");
+  res.send("🐾 Paw&Co backend is running successfully!");
 });
 
 const __dirname = path.resolve();
 
+// Обслужване на статични файлове: Търси в public/build
 app.use(express.static(path.join(__dirname, "public", "build")));
 
-app.get("*", (req, res) =>
-  res.sendFile(path.resolve(__dirname, "public", "build", "index.html"))
+// Уайлдкард маршрут: Търси в public/build (поправя PathError)
+app.get('/*', (req, res) =>
+  res.sendFile(path.resolve(__dirname, "public", "build", "index.html"))
 );
 
-//  SERVER START 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () =>
-  console.log(`✅ Server running on http://localhost:${PORT}`)
+  console.log(`✅ Server running on http://localhost:${PORT}`)
 );
