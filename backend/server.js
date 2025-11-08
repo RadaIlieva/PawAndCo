@@ -33,7 +33,9 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 
-app.get("/", (req, res) => {
+// Внимавайте: Промених app.get("/") по-долу, за да е последният Catch-All.
+// Този get остава само за показване на съобщение за успешно стартиране на сървъра.
+app.get("/backend-status", (req, res) => {
   res.send("🐾 Paw&Co backend is running successfully!");
 });
 
@@ -42,8 +44,8 @@ const __dirname = path.resolve();
 // Обслужване на статични файлове: Търси в public/build
 app.use(express.static(path.join(__dirname, "public", "build")));
 
-// Уайлдкард маршрут: Търси в public/build (поправя PathError)
-app.get('/*', (req, res) =>
+// Най-финална корекция за Render: app.get('/', ...) обикновено замества '/*'
+app.get('/', (req, res) =>
   res.sendFile(path.resolve(__dirname, "public", "build", "index.html"))
 );
 
