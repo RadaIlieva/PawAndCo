@@ -1,11 +1,12 @@
 const productList = document.getElementById("productList");
 const buttons = document.querySelectorAll(".category-btn");
 let cart = [];
+const API_BASE_URL = window.location.origin;
 
 // 🔹 Взимане на продукти от бекенда
 async function fetchProducts() {
   try {
-    const res = await fetch("http://localhost:5000/api/products");
+    const res = await fetch(`${API_BASE_URL}/api/products`);
     return await res.json();
   } catch (error) {
     console.error("Грешка при взимане на продукти:", error);
@@ -26,7 +27,7 @@ async function renderProducts(filter = "Всички") {
     const card = document.createElement("div");
     card.classList.add("product-card");
     card.innerHTML = `
-      <img src="http://localhost:5000${p.image}" alt="${p.name}">
+      <img src="${API_BASE_URL}${p.image}" alt="${p.name}">
       <h3>${p.name}</h3>
       <p>${p.description}</p>
       <p class="price">${p.priceBGN} лв (${eur} €)</p>
@@ -58,12 +59,7 @@ function showCartMessage(message) {
 
   document.body.appendChild(msg);
 
-  // Анимация за появяване
-  setTimeout(() => {
-    msg.classList.add("visible");
-  }, 100);
-
-  // Изчезване след 2 сек.
+  setTimeout(() => msg.classList.add("visible"), 100);
   setTimeout(() => {
     msg.classList.remove("visible");
     setTimeout(() => msg.remove(), 500);
@@ -96,7 +92,7 @@ function openCart() {
           .map(
             (p) => `
           <li>
-            <img src="http://localhost:5000${p.image}" alt="${p.name}">
+            <img src="${API_BASE_URL}${p.image}" alt="${p.name}">
             <div>
               <strong>${p.name}</strong><br>
               ${p.priceBGN} лв × ${p.quantity}
@@ -165,16 +161,17 @@ function openOrderForm() {
     </div>
   `;
 
-
-  // Placeholder за адрес според опцията
   const deliveryRadios = document.querySelectorAll('input[name="deliveryType"]');
   const addressInput = document.getElementById("customerAddress");
 
-  deliveryRadios.forEach(radio => {
+  deliveryRadios.forEach((radio) => {
     radio.addEventListener("change", () => {
-      if(radio.value === "home") addressInput.placeholder = "Въведете адрес за доставка";
-      else if(radio.value === "econt") addressInput.placeholder = "Въведете офис на Еконт";
-      else if(radio.value === "speedy") addressInput.placeholder = "Въведете офис на Спиди";
+      if (radio.value === "home")
+        addressInput.placeholder = "Въведете адрес за доставка";
+      else if (radio.value === "econt")
+        addressInput.placeholder = "Въведете офис на Еконт";
+      else if (radio.value === "speedy")
+        addressInput.placeholder = "Въведете офис на Спиди";
     });
   });
 
@@ -182,14 +179,13 @@ function openOrderForm() {
   document.getElementById("submitOrder").addEventListener("click", submitOrder);
 }
 
-
 // 🔹 Изпращане на поръчка
 async function submitOrder() {
   const name = document.getElementById("customerName").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
   const phone = document.getElementById("customerPhone").value.trim();
   const email = document.getElementById("customerEmail").value.trim();
-  const note = document.getElementById("customerNote").value.trim(); // 🆕 взимаме бележката
+  const note = document.getElementById("customerNote").value.trim();
 
   if (!name || !address || !phone || !email) {
     alert("Моля, попълнете всички полета!");
@@ -203,7 +199,7 @@ async function submitOrder() {
     customerAddress: address,
     customerPhone: phone,
     customerEmail: email,
-    note, // 🆕 добавяме бележката
+    note,
     products: cart.map((p) => ({
       name: p.name,
       priceBGN: p.priceBGN,
@@ -214,7 +210,7 @@ async function submitOrder() {
   };
 
   try {
-    const res = await fetch("http://localhost:5000/api/orders", {
+    const res = await fetch(`${API_BASE_URL}/api/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order),

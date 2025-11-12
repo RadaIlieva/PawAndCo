@@ -1,4 +1,5 @@
 // ---------- КАЛЕНДАР НА РЕЗЕРВАЦИИТЕ ----------
+const API_BASE_URL = window.location.origin;
 
 const calendarContainer = document.getElementById("calendar");
 const bookingDetails = document.createElement("div");
@@ -12,7 +13,7 @@ let adminWeekStart = new Date();
 window.deleteBooking = async function (id) {
     if (!confirm("Сигурни ли сте, че искате да изтриете тази резервация?")) return;
     try {
-        const res = await fetch(`http://localhost:5000/api/bookings/${id}`, { 
+        const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, { 
             method: "DELETE",
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
@@ -36,7 +37,7 @@ window.deleteBooking = async function (id) {
 // ----------- ЗАРЕЖДАНЕ НА РЕЗЕРВАЦИИ -----------
 async function loadAdminBookings() {
     try {
-        const res = await fetch("http://localhost:5000/api/bookings", {
+        const res = await fetch(`${API_BASE_URL}/api/bookings`, {
             headers: {
                 'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
             }
@@ -187,8 +188,8 @@ function showAddBookingForm(date = "", hour = "") {
             return;
         }
 
-        try {
-            const res = await fetch("http://localhost:5000/api/bookings/admin", {
+         try {
+            const res = await fetch(`${API_BASE_URL}/api/bookings/admin`, {
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
@@ -238,8 +239,8 @@ window.editBooking = function (id) {
 async function handleHourClick(date, hour) {
     if (currentEditingBooking) {
         // редактиране на вече съществуваща резервация
-        try {
-            const res = await fetch(`http://localhost:5000/api/bookings/${currentEditingBooking._id}`, {
+       try {
+            const res = await fetch(`${API_BASE_URL}/api/bookings/${currentEditingBooking._id}`, {
                 method: "PATCH",
                 headers: { 
                     "Content-Type": "application/json",

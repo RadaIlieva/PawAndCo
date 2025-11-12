@@ -1,4 +1,4 @@
-// Глобални променливи
+// ---------- ГЛОБАЛНИ ПРЕМЕНЛИВИ ----------
 let products = [];
 const list = document.getElementById("adminProducts");
 const form = document.getElementById("productForm");
@@ -10,37 +10,41 @@ const imageInput = document.getElementById("image");
 const editIdInput = document.getElementById("editId");
 const eurPrice = document.getElementById("eurPrice");
 
-// Добавяне / редакция на продукт
-if (form) form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+// ---------- СЪЗДАВАНЕ / РЕДАКЦИЯ НА ПРОДУКТ ----------
+if (form) {
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("name", nameInput.value);
-    formData.append("description", descriptionInput.value);
-    formData.append("category", categoryInput.value);
-    formData.append("priceBGN", parseFloat(priceInput.value).toFixed(2));
+        const formData = new FormData();
+        formData.append("name", nameInput.value);
+        formData.append("description", descriptionInput.value);
+        formData.append("category", categoryInput.value);
+        formData.append("priceBGN", parseFloat(priceInput.value).toFixed(2));
 
-    if (imageInput.files[0]) formData.append("image", imageInput.files[0]);
+        if (imageInput.files[0]) {
+            formData.append("image", imageInput.files[0]);
+        }
 
-    const url = editIdInput.value
-        ? `http://localhost:5000/api/products/${editIdInput.value}`
-        : "http://localhost:5000/api/products";
-    const method = editIdInput.value ? "PUT" : "POST";
+        const url = editIdInput.value
+            ? `http://localhost:5000/api/products/${editIdInput.value}`
+            : "http://localhost:5000/api/products";
+        const method = editIdInput.value ? "PUT" : "POST";
 
-    try {
-        const res = await fetch(url, { method, body: formData });
-        if (!res.ok) throw new Error("Грешка при запис на продукта");
+        try {
+            const res = await fetch(url, { method, body: formData });
+            if (!res.ok) throw new Error("Грешка при запис на продукта");
 
-        form.reset();
-        eurPrice.textContent = "";
-        editIdInput.value = "";
-        loadProducts();
-    } catch (err) {
-        alert(err.message);
-    }
-});
+            form.reset();
+            eurPrice.textContent = "";
+            editIdInput.value = "";
+            loadProducts();
+        } catch (err) {
+            alert(err.message);
+        }
+    });
+}
 
-// Зареждане на продуктите
+// ---------- ЗАРЕЖДАНЕ НА ПРОДУКТИ ----------
 async function loadProducts() {
     try {
         const res = await fetch("http://localhost:5000/api/products");
@@ -54,7 +58,7 @@ async function loadProducts() {
     }
 }
 
-// Рендиране на продуктите
+// ---------- РЕНДИРАНЕ НА ПРОДУКТИ ----------
 function renderProducts() {
     if (!list) return;
     list.innerHTML = "";
@@ -65,8 +69,12 @@ function renderProducts() {
         card.classList.add("product-card");
         card.dataset.id = p._id;
 
+        const imgUrl = p.image?.startsWith("http")
+            ? p.image
+            : `http://localhost:5000${p.image}`;
+
         card.innerHTML = `
-            ${p.image ? `<img src="http://localhost:5000${p.image}" alt="${p.name}">` : ""}
+            ${p.image ? `<img src="${imgUrl}" alt="${p.name}">` : ""}
             <h3>${p.name}</h3>
             <p>${p.description}</p>
             <p><b>${p.priceBGN} лв</b> (${eur} €)</p>
@@ -80,10 +88,11 @@ function renderProducts() {
     });
 }
 
-// Редакция на продукт
+// ---------- РЕДАКЦИЯ НА ПРОДУКТ ----------
 window.editProduct = function (id) {
     const p = products.find((p) => p._id === id);
     if (!p) return;
+
     nameInput.value = p.name;
     descriptionInput.value = p.description;
     categoryInput.value = p.category;
@@ -92,12 +101,15 @@ window.editProduct = function (id) {
     eurPrice.textContent = `≈ ${(p.priceBGN / 1.96).toFixed(2)} €`;
 };
 
-// Изтриване на продукт
+// ---------- ИЗТРИВАНЕ НА ПРОДУКТ ----------
 window.deleteProduct = async function (id) {
     if (!confirm("Сигурни ли сте, че искате да изтриете продукта?")) return;
 
     try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`, { method: "DELETE" });
+        const res = await fetch(`http://localhost:5000/api/products/${id}`, {
+            method: "DELETE",
+        });
+
         if (!res.ok) throw new Error("Грешка при изтриване на продукта");
         loadProducts();
     } catch (err) {
@@ -105,5 +117,5 @@ window.deleteProduct = async function (id) {
     }
 };
 
-// Зареждане на продуктите при стартиране на страницата
-document.addEventListener("DOMContentLoaded", loadProducts);а
+// ---------- ИНИЦИАЛНО ЗАРЕЖДАНЕ ----------
+document.addEventListener("DOMContentLoaded", loadProducts);
