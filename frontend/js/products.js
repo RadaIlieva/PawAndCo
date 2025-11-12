@@ -3,7 +3,6 @@ const buttons = document.querySelectorAll(".category-btn");
 let cart = [];
 const API_BASE_URL = window.location.origin;
 
-// 🔹 Взимане на продукти от бекенда
 async function fetchProducts() {
   try {
     const res = await fetch(`${API_BASE_URL}/api/products`);
@@ -14,7 +13,6 @@ async function fetchProducts() {
   }
 }
 
-// 🔹 Рендиране на продукти
 async function renderProducts(filter = "Всички") {
   const products = await fetchProducts();
   productList.innerHTML = "";
@@ -39,7 +37,6 @@ async function renderProducts(filter = "Всички") {
   });
 }
 
-// 🔹 Добавяне в количката
 function addToCart(product) {
   const existing = cart.find((p) => p._id === product._id);
   if (existing) existing.quantity++;
@@ -47,11 +44,9 @@ function addToCart(product) {
 
   updateCartIcon();
 
-  // ✅ Показване на плаващо съобщение
   showCartMessage(`${product.name} е добавен в количката 🛒`);
 }
 
-// 🔹 Плаващо съобщение при добавяне
 function showCartMessage(message) {
   const msg = document.createElement("div");
   msg.textContent = message;
@@ -66,13 +61,11 @@ function showCartMessage(message) {
   }, 2000);
 }
 
-// 🔹 Обновяване на иконата
 function updateCartIcon() {
   const count = cart.reduce((sum, p) => sum + p.quantity, 0);
   document.getElementById("cartCount").textContent = count;
 }
 
-// 🔹 Отваряне на количката
 function openCart() {
   productList.innerHTML = "";
 
@@ -128,7 +121,6 @@ function openCart() {
   if (orderBtn) orderBtn.addEventListener("click", openOrderForm);
 }
 
-// 🔹 Форма за поръчка
 function openOrderForm() {
   productList.innerHTML = `
     <div class="order-form fade-in">
@@ -179,7 +171,6 @@ function openOrderForm() {
   document.getElementById("submitOrder").addEventListener("click", submitOrder);
 }
 
-// 🔹 Изпращане на поръчка
 async function submitOrder() {
   const name = document.getElementById("customerName").value.trim();
   const address = document.getElementById("customerAddress").value.trim();
@@ -228,7 +219,6 @@ async function submitOrder() {
   }
 }
 
-// 🔹 Категории
 buttons.forEach((btn) => {
   btn.addEventListener("click", () => {
     buttons.forEach((b) => b.classList.remove("active"));
@@ -237,7 +227,6 @@ buttons.forEach((btn) => {
   });
 });
 
-// 🔹 Стартиране
 window.addEventListener("DOMContentLoaded", () => {
   const cartIcon = document.getElementById("cartIcon");
   cartIcon.addEventListener("click", openCart);

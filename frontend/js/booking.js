@@ -1,6 +1,3 @@
-// ========================
-// ГЛОБАЛНА ОСНОВА ЗА API
-// ========================
 const API_BASE_URL = window.location.origin;
 const API_URL = `${API_BASE_URL}/api/bookings`;
 

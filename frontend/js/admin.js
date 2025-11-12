@@ -1,6 +1,3 @@
-// ========================
-// ЕЛЕМЕНТИ ОТ DOM
-// ========================
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 const loginSection = document.getElementById("loginSection");
