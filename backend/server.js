@@ -35,7 +35,7 @@ app.use(
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-app.use(express.static(join(__dirname, "..", "frontend", "html")));
+app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 app.use("/api/products", product);
 app.use("/api/orders", orderRoutes);
