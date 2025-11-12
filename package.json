@@ -1,7 +1,7 @@
 {
-  "name": "pawandco",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Paw & Co Grooming Salon Website",
+  "description": "PawAndCo Backend Server",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "Твоето име или празно",
+  "author": "",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
