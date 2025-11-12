@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import Booking from "./models/Booking";
+import Booking from "./models/Booking.js";
 
 
 async function deleteOldBookings() {
