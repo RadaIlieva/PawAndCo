@@ -1,4 +1,3 @@
-// ---------- ГЛОБАЛНИ ПРЕМЕНЛИВИ ----------
 let products = [];
 const list = document.getElementById("adminProducts");
 const form = document.getElementById("productForm");
