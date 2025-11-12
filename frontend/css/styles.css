@@ -13,7 +13,6 @@ body {
   color: var(--text-dark);
 }
 
-/* 🟣 Хедър */
 header {
   background: linear-gradient(180deg, var(--lavender), var(--light-purple));
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
@@ -28,7 +27,6 @@ header {
   margin: 0 auto;
 }
 
-/* Лого и заглавие */
 .logo-container {
   display: flex;
   align-items: center;
@@ -49,7 +47,6 @@ header h1 {
   white-space: nowrap;
 }
 
-/* Навигация */
 nav a {
   margin-left: 20px;
   text-decoration: none;
@@ -63,7 +60,6 @@ nav a.active {
   color: #fff;
 }
 
-/* 🟣 Основна секция */
 .main-content {
   display: flex;
   justify-content: center;
@@ -79,7 +75,6 @@ nav a.active {
   flex-wrap: wrap;
 }
 
-/* 🗺️ Карта */
 .map-container {
   flex: 1;
   min-width: 300px;
@@ -95,7 +90,6 @@ nav a.active {
   border: none;
 }
 
-/* ℹ️ Контактно поле */
 .contact-box {
   flex: 0.6;
   min-width: 260px;
@@ -124,7 +118,6 @@ nav a.active {
   text-decoration: underline;
 }
 
-/* 🐶 Галерия */
 .gallery-container {
   flex: 1;
   min-width: 300px;
@@ -142,7 +135,6 @@ nav a.active {
   display: none;
 }
 
-/* 🟣 Footer */
 footer {
   background: var(--lavender);
   text-align: center;
@@ -152,7 +144,6 @@ footer {
   margin-top: 40px;
 }
 
-/* 🟣 Responsive стилове */
 @media (max-width: 900px) {
   .header-content {
     flex-direction: column;
@@ -185,7 +176,6 @@ footer {
 }
 
 
-/* 🟣 Резервационна секция */
 .rezervation {
   position: relative;
   width: 100%;
@@ -238,14 +228,13 @@ footer {
   flex-wrap: wrap;
 }
 
-/* 🐾 Лява текстова част */
 .salon-info {
   flex: 1;
   color: var(--text-dark);
 }
 
 .salon-info h3 {
-  font-size: 1.7rem;
+  font-size: 1.9rem;
   color: var(--dark-purple);
   margin-bottom: 15px;
 }
