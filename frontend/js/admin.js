@@ -1,100 +1,93 @@
-    const loginForm = document.getElementById("loginForm");
-    const loginMessage = document.getElementById("loginMessage");
-    const loginSection = document.getElementById("loginSection");
-    const adminPanel = document.getElementById("adminPanel");
+// ========================
+// ЕЛЕМЕНТИ ОТ DOM
+// ========================
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+const loginSection = document.getElementById("loginSection");
+const adminPanel = document.getElementById("adminPanel");
 
-    const calendarBtn = document.getElementById("calendarBtn");
-    const ordersBtn = document.getElementById("ordersBtn");
-    const productsBtn = document.getElementById("productsBtn");
+const calendarBtn = document.getElementById("calendarBtn");
+const ordersBtn = document.getElementById("ordersBtn");
+const productsBtn = document.getElementById("productsBtn");
 
-    const calendarSection = document.getElementById("calendarSection");
-    const ordersSection = document.getElementById("ordersSection");
-    const productsSection = document.getElementById("productsSection");
+const calendarSection = document.getElementById("calendarSection");
+const ordersSection = document.getElementById("ordersSection");
+const productsSection = document.getElementById("productsSection");
 
-    // ========================
-    // ВХОД НА АДМИН
-    // ========================
-    loginForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
+const API_BASE_URL = window.location.origin;
 
-    const email = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+loginForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    try {
-        const res = await fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        });
+  const email = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
 
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.message || "Грешка при вход");
-
-        // ✅ Запазваме токена в sessionStorage (не localStorage)
-        sessionStorage.setItem("adminToken", data.token);
-
-        loginMessage.textContent = "";
-        loginSection.classList.add("hidden");
-        adminPanel.classList.remove("hidden");
-
-        // Зареждаме нужните данни
-        if (typeof loadAdminBookings === "function") loadAdminBookings();
-        if (typeof loadOrders === "function") loadOrders();
-        if (typeof loadProducts === "function") loadProducts();
-    } catch (err) {
-        loginMessage.textContent = "⚠️ " + err.message;
-    }
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     });
 
-    // ========================
-    // ПРОВЕРКА НА ВХОДА ПРИ ЗАРЕЖДАНЕ
-    // ========================
-    document.addEventListener("DOMContentLoaded", async () => {
-    const token = sessionStorage.getItem("adminToken");
+    const data = await res.json();
 
-    if (!token) {
-        loginSection.classList.remove("hidden");
-        adminPanel.classList.add("hidden");
-        return;
-    }
+    if (!res.ok) throw new Error(data.message || "Грешка при вход");
 
-    try {
-        const res = await fetch("http://localhost:5000/api/admin/verify", {
-        headers: { Authorization: `Bearer ${token}` },
-        });
+    // ✅ Запазваме токена в sessionStorage (по-сигурно от localStorage)
+    sessionStorage.setItem("adminToken", data.token);
 
-        if (!res.ok) throw new Error();
+    loginMessage.textContent = "";
+    loginSection.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
 
-        loginSection.classList.add("hidden");
-        adminPanel.classList.remove("hidden");
-    } catch {
-        sessionStorage.removeItem("adminToken");
-        loginSection.classList.remove("hidden");
-        adminPanel.classList.add("hidden");
-    }
+    // Зареждаме нужните данни
+    if (typeof loadAdminBookings === "function") loadAdminBookings();
+    if (typeof loadOrders === "function") loadOrders();
+    if (typeof loadProducts === "function") loadProducts();
+  } catch (err) {
+    loginMessage.textContent = "⚠️ " + err.message;
+  }
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const token = sessionStorage.getItem("adminToken");
+
+  if (!token) {
+    loginSection.classList.remove("hidden");
+    adminPanel.classList.add("hidden");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/admin/verify`, {
+      headers: { Authorization: `Bearer ${token}` },
     });
 
-    // ========================
-    // LOGOUT БУТОН
-    // ========================
-    window.logoutAdmin = function () {
+    if (!res.ok) throw new Error();
+
+    loginSection.classList.add("hidden");
+    adminPanel.classList.remove("hidden");
+  } catch {
     sessionStorage.removeItem("adminToken");
-    window.location.reload();
-    };
+    loginSection.classList.remove("hidden");
+    adminPanel.classList.add("hidden");
+  }
+});
 
-    // ========================
-    // ТАБОВЕ
-    // ========================
-    calendarBtn.addEventListener("click", () => showSection("calendarSection"));
-    ordersBtn.addEventListener("click", () => showSection("ordersSection"));
-    productsBtn.addEventListener("click", () => showSection("productsSection"));
+window.logoutAdmin = function () {
+  sessionStorage.removeItem("adminToken");
+  window.location.reload();
+};
 
-    function showSection(id) {
-    [calendarSection, ordersSection, productsSection].forEach((s) =>
-        s.classList.add("hidden")
-    );
-    calendarSection.classList.toggle("hidden", id !== "calendarSection");
-    ordersSection.classList.toggle("hidden", id !== "ordersSection");
-    productsSection.classList.toggle("hidden", id !== "productsSection");
-    }
+calendarBtn.addEventListener("click", () => showSection("calendarSection"));
+ordersBtn.addEventListener("click", () => showSection("ordersSection"));
+productsBtn.addEventListener("click", () => showSection("productsSection"));
+
+function showSection(id) {
+  [calendarSection, ordersSection, productsSection].forEach((s) =>
+    s.classList.add("hidden")
+  );
+  calendarSection.classList.toggle("hidden", id !== "calendarSection");
+  ordersSection.classList.toggle("hidden", id !== "ordersSection");
+  productsSection.classList.toggle("hidden", id !== "productsSection");
+}

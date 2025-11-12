@@ -1,4 +1,8 @@
-const API_URL = "http://localhost:5000/api/bookings";
+// ========================
+// ГЛОБАЛНА ОСНОВА ЗА API
+// ========================
+const API_BASE_URL = window.location.origin;
+const API_URL = `${API_BASE_URL}/api/bookings`;
 
 let bookings = {};
 let selectedDate = "";
@@ -66,7 +70,7 @@ function renderCalendar() {
     const options = { weekday: 'short', day: 'numeric', month: 'short' };
     dayDiv.innerHTML = `<h4>${day.toLocaleDateString('bg-BG', options)}</h4>`;
 
-    for (let hour = 9; hour <= 18; hour+=2) {
+    for (let hour = 9; hour <= 18; hour += 2) {
       const hourDiv = document.createElement('div');
       hourDiv.classList.add('hour');
       hourDiv.textContent = `${hour}:00`;

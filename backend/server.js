@@ -45,6 +45,9 @@ app.use("/api/admin", adminRoutes);
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "..", "frontend", "html", "index.html"));
 });
+app.get("/index.html", (req, res) => {
+  res.sendFile(join(__dirname, "..", "frontend", "html", "index.html"));
+});
 app.get("/booking.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend/html/booking.html"));
 });
