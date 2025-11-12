@@ -9,7 +9,7 @@ const imageInput = document.getElementById("image");
 const editIdInput = document.getElementById("editId");
 const eurPrice = document.getElementById("eurPrice");
 
-const API_BASE_URL = window.location.origin;
+
 
 // ---------- СЪЗДАВАНЕ / РЕДАКЦИЯ НА ПРОДУКТ ----------
 if (form) {

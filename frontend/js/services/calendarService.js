@@ -1,4 +1,4 @@
-const API_BASE_URL = window.location.origin;
+
 
 const calendarContainer = document.getElementById("calendar");
 const bookingDetails = document.createElement("div");
