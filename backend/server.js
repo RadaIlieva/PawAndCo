@@ -45,6 +45,20 @@ app.use("/api/admin", adminRoutes);
 app.get("/", (req, res) => {
   res.sendFile(join(__dirname, "..", "frontend", "html", "index.html"));
 });
+app.get("/booking.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend/html/booking.html"));
+});
+
+app.get("/products.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend/html/products.html"));
+});
+
+app.get("/admin.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "frontend/html/admin.html"));
+});
+
+
+
 
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/")) return next(); 
