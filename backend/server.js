@@ -4,6 +4,11 @@ import dotenv from "dotenv";
 import path from "path";
 import connectDB from "./config/db.js";
 import { startCleanupJob } from "./cleanupJob.js"; 
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 import product from "./routes/products.js";
 import orderRoutes from "./routes/orderRoutes.js";
@@ -30,7 +35,7 @@ app.use(
 
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-app.use(express.static(path.join(process.cwd(), "frontend", "html")));
+app.use(express.static(join(__dirname, "..", "frontend", "html")));
 
 app.use("/api/products", product);
 app.use("/api/orders", orderRoutes);
@@ -38,7 +43,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(process.cwd(), "frontend", "html", "index.html"));
+  res.sendFile(join(__dirname, "..", "frontend", "html", "index.html"));
 });
 
 app.use((req, res, next) => {
