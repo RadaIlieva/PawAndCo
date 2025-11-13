@@ -39,9 +39,10 @@ async function loadBookings() {
     const data = await res.json();
     bookings = {};
 
+    // Запазваме цялата резервация, а не само час
     data.forEach(b => {
       if (!bookings[b.date]) bookings[b.date] = [];
-      bookings[b.date].push(b.hour);
+      bookings[b.date].push(b); 
     });
 
     renderCalendar();
@@ -62,44 +63,41 @@ function renderCalendar() {
   }
 
   week.forEach(day => {
-  const dayDiv = document.createElement('div');
-  dayDiv.classList.add('day');
-  const options = { weekday: 'short', day: 'numeric', month: 'short' };
-  dayDiv.innerHTML = `<h4>${day.toLocaleDateString('bg-BG', options)}</h4>`;
+    const dayDiv = document.createElement('div');
+    dayDiv.classList.add('day');
+    const options = { weekday: 'short', day: 'numeric', month: 'short' };
+    dayDiv.innerHTML = `<h4>${day.toLocaleDateString('bg-BG', options)}</h4>`;
 
-  for (let hour = 9; hour <= 18; hour += 2) {
-    const hourDiv = document.createElement('div');
-    hourDiv.classList.add('hour');
-    hourDiv.textContent = `${hour}:00`;
+    for (let hour = 9; hour <= 18; hour += 2) {
+      const hourDiv = document.createElement('div');
+      hourDiv.classList.add('hour');
+      hourDiv.textContent = `${hour}:00`;
 
-    const dateStr = day.toISOString().split('T')[0];
+      const dateStr = day.toISOString().split('T')[0];
+      const bookingsForDay = bookings[dateStr] || [];
 
-    // ✅ Проверяваме дали часът е зает
-    if (
-      bookings[dateStr] && (
-        bookings[dateStr].includes(hour) ||
-        bookings[dateStr].includes(`${hour}:00`) ||
-        bookings[dateStr].includes(`${hour}`)
-      )
-    ) {
-      hourDiv.classList.add('booked');
-      hourDiv.textContent = `${hour}:00 (заето)`;
-    } 
-    // ✅ Ако часът е свободен — можем да го изберем
-    else {
-      hourDiv.addEventListener('click', () => {
-        selectedDate = dateStr;
-        selectedTime = hour;
-        selectedHour.textContent = `Избрахте ${selectedDate} в ${selectedTime}:00`;
+      // Проверка дали часът е зает
+      const booked = bookingsForDay.find(b => {
+        const bookedHour = typeof b.hour === "number" ? b.hour : parseInt(b.hour);
+        return bookedHour === hour;
       });
+
+      if (booked) {
+        hourDiv.classList.add('booked'); // добавяме CSS клас
+        hourDiv.textContent = `${hour}:00 (заето)`;
+      } else {
+        hourDiv.addEventListener('click', () => {
+          selectedDate = dateStr;
+          selectedTime = hour;
+          selectedHour.textContent = `Избрахте ${selectedDate} в ${selectedTime}:00`;
+        });
+      }
+
+      dayDiv.appendChild(hourDiv);
     }
 
-    dayDiv.appendChild(hourDiv);
-  }
-
-  calendar.appendChild(dayDiv);
-});
-
+    calendar.appendChild(dayDiv);
+  });
 }
 
 // Изпращане на резервация
@@ -120,8 +118,6 @@ document.getElementById('bookingForm').addEventListener('submit', async e => {
     hour: selectedTime
   };
 
-  console.log("📤 Изпращам резервация:", bookingData);
-
   try {
     const res = await fetch(API_URL, {
       method: "POST",
@@ -130,8 +126,6 @@ document.getElementById('bookingForm').addEventListener('submit', async e => {
     });
 
     const result = await res.json();
-    console.log("📥 Отговор:", result);
-
     if (!res.ok) {
       alert(result.message || "⚠️ Грешка при създаване на резервация");
       return;
@@ -146,5 +140,16 @@ document.getElementById('bookingForm').addEventListener('submit', async e => {
     alert("⚠️ Проблем със свързването към сървъра!");
   }
 });
+
+// Добавяме CSS за червени заети часове
+const style = document.createElement('style');
+style.innerHTML = `
+  .hour.booked {
+    background-color: #f8d7da;
+    color: #721c24;
+    cursor: not-allowed;
+  }
+`;
+document.head.appendChild(style);
 
 loadBookings();
