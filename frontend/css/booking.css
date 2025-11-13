@@ -14,7 +14,6 @@ body {
   color: var(--text-dark);
 }
 
-/* 🟣 Хедър */
 header {
   background: linear-gradient(180deg, var(--lavender), var(--light-purple));
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
@@ -90,6 +89,7 @@ h2 {
   margin-top: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  align-items: center;
 }
 
 .calendar-container {
