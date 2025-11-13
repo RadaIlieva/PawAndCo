@@ -24,54 +24,41 @@
     </div>
   </header>
 
-  <section class="rezervation">
-    <img src="/images/background6.png" alt="background1">
- 
-      <section class="booking">
-        <h2>Резервирай час</h2>
+  <section class="booking">
+    <h2>Резервирай час</h2>
 
-        <form class="booking-form" id="bookingForm">
-          <label>Име на собственика</label>
-          <input type="text" id="ownerName" required>
+    <form class="booking-form" id="bookingForm">
+      <label>Име на собственика</label>
+      <input type="text" id="ownerName" required>
 
-          <label>Име на кучето</label>
-          <input type="text" id="dogName" required>
+      <label>Име на кучето</label>
+      <input type="text" id="dogName" required>
 
-          <label>Порода</label>
-          <input type="text" id="breed" required>
+      <label>Порода</label>
+      <input type="text" id="breed" required>
 
-          <label>Телефон</label>
-          <input type="text" id="phone" required>
+      <label>Телефон</label>
+      <input type="text" id="phone" required>
 
-          <div class="calendar-toggle">
-            <span>Избери ден и час</span>
-            <img src="/images/calendar.png" id="showCalendar" alt="Календар">
-          </div>
+      <div class="calendar-toggle">
+        <span>Избери ден и час</span>
+        <img src="/images/calendar.png" id="showCalendar" alt="Календар">
+      </div>
 
-          <div class="calendar-container">
-            <div class="calendar-nav">
-              <span class="nav-arrow" id="prevWeek">&#8592;</span>
-              <span>Седмица</span>
-              <span class="nav-arrow" id="nextWeek">&#8594;</span>
-            </div>
-            <div class="calendar" id="calendar"></div>
-          </div>
+      <div class="calendar-container">
+        <div class="calendar-nav">
+          <span class="nav-arrow" id="prevWeek">&#8592;</span>
+          <span>Седмица</span>
+          <span class="nav-arrow" id="nextWeek">&#8594;</span>
+        </div>
+        <div class="calendar" id="calendar"></div>
+      </div>
 
-          <p id="selectedHour"></p>
-          <button type="submit" class="btn">Резервирай</button>
-        </form>
-      </section>
+      <p id="selectedHour"></p>
+      <button type="submit" class="btn">Резервирай</button>
+    </form>
+  </section>
 
-          <div class="salon-image-box">
-              <img src="/images/20251104_110713.jpg" alt="Интериор на салона">
-              <img src="/images/20251104_110756.jpg" alt="Интериор на салона">
-              <img src="/images/cenorazzpis1.jpg" alt="Интериор на салона">
-              <img src="/images/cenorazzpis2.jpg" alt="Интериор на салона">
-          </div> 
-
-   </section>
-      
-      
   <!-- Външен JavaScript файл -->
   <script src="/js/booking.js"></script>
 </body>
