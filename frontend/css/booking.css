@@ -83,16 +83,17 @@ h2 {
 
 .booking-form input, 
 .booking-form select, 
-.booking-form button {
+.booking-form button,
+.booking-form textarea {
   width: 100%;
   padding: 10px;
+  padding-right: 15px; /* добавено разстояние от дясната страна */
   margin-top: 5px;
   margin-right: 15px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  align-items: center;
+  box-sizing: border-box; /* за да не излиза извън формата */
 }
-
 .calendar-container {
   display: none;
   margin-top: 15px;

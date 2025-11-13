@@ -39,7 +39,7 @@ async function loadBookings() {
     const data = await res.json();
     bookings = {};
 
-    // Запазваме цялата резервация, а не само час
+    // Запазваме цялата резервация за по-добра проверка
     data.forEach(b => {
       if (!bookings[b.date]) bookings[b.date] = [];
       bookings[b.date].push(b); 
@@ -83,8 +83,10 @@ function renderCalendar() {
       });
 
       if (booked) {
-        hourDiv.classList.add('booked'); // добавяме CSS клас
+        hourDiv.classList.add('booked'); // червен фон
         hourDiv.textContent = `${hour}:00 (заето)`;
+        // Опционално tooltip с име на собственик и куче
+        hourDiv.title = `${booked.ownerName} - ${booked.dogName}`;
       } else {
         hourDiv.addEventListener('click', () => {
           selectedDate = dateStr;
@@ -148,6 +150,14 @@ style.innerHTML = `
     background-color: #f8d7da;
     color: #721c24;
     cursor: not-allowed;
+    font-weight: bold;
+    border: 1px solid #f5c2c7;
+    border-radius: 6px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .hour.booked:hover {
+    transform: none;
   }
 `;
 document.head.appendChild(style);
