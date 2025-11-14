@@ -33,14 +33,14 @@ nextWeekBtn.addEventListener('click', () => {
 // Зареждане на резервации
 async function loadBookings() {
   try {
-    const res = await fetch(API_USER_BOOKINGS);
+    const res = await fetch(API_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
     bookings = {};
     data.forEach(b => {
       if (!bookings[b.date]) bookings[b.date] = [];
-      bookings[b.date].push(b.hour); // запазваме само заетите часове
+      bookings[b.date].push(b); // ← важно!
     });
 
     renderCalendar();
@@ -48,7 +48,6 @@ async function loadBookings() {
     console.error("❌ Грешка при зареждане на резервации:", err);
   }
 }
-
 // Рендериране на календара
 function renderCalendar() {
   calendar.innerHTML = "";

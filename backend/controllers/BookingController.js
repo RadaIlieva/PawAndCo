@@ -134,19 +134,6 @@ export const updateBooking = async (req, res) => {
   }
 };
 
-
-// 📅 Връща заетите часове за потребител
-export const getUserBookings = async (req, res) => {
-  try {
-    // Връща само дата и час, без лична информация
-    const bookings = await Booking.find({}, { date: 1, hour: 1, _id: 0 });
-    res.json(bookings);
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при зареждане на заетите часове", error: error.message });
-  }
-};
-
-
 // ❌ Изтриване на резервация
 export const deleteBooking = async (req, res) => {
   try {
