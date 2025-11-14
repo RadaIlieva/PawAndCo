@@ -1,148 +1,163 @@
-import Booking from "../models/Booking.js";
+const API_BASE_URL = window.location.origin;
+const API_URL = `${API_BASE_URL}/api/bookings`;
 
-// ✅ Функция за проверка на телефон (формат: само цифри, минимум 9 цифри)
-const isValidPhone = (phone) => {
-  const phoneRegex = /^[0-9]{9,15}$/;
-  return phoneRegex.test(phone);
-};
+let bookings = {};
+let selectedDate = "";
+let selectedTime = "";
+let weekStart = new Date();
 
-// 📅 Клиент: прави нова резервация (само потребителски данни)
-export const createBooking = async (req, res) => {
+const calendarContainer = document.querySelector('.calendar-container');
+const calendar = document.getElementById('calendar');
+const showCalendarBtn = document.getElementById('showCalendar');
+const selectedHour = document.getElementById('selectedHour');
+const prevWeekBtn = document.getElementById('prevWeek');
+const nextWeekBtn = document.getElementById('nextWeek');
+
+// Показване/скриване на календара
+showCalendarBtn.addEventListener('click', () => {
+  calendarContainer.style.display =
+    calendarContainer.style.display === 'block' ? 'none' : 'block';
+  if (calendarContainer.style.display === 'block') renderCalendar();
+});
+
+// Навигация по седмици
+prevWeekBtn.addEventListener('click', () => {
+  weekStart.setDate(weekStart.getDate() - 7);
+  renderCalendar();
+});
+nextWeekBtn.addEventListener('click', () => {
+  weekStart.setDate(weekStart.getDate() + 7);
+  renderCalendar();
+});
+
+// Зареждане на резервации
+async function loadBookings() {
   try {
-    const { ownerName, dogName, breed, phone, date, hour } = req.body;
+    const res = await fetch(API_USER_BOOKINGS);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
 
-    if (!ownerName || !dogName || !breed || !phone || !date || !hour) {
-      return res.status(400).json({ message: "❌ Моля, попълнете всички полета." });
-    }
+    bookings = {};
+    data.forEach(b => {
+      if (!bookings[b.date]) bookings[b.date] = [];
+      bookings[b.date].push(b.hour); // запазваме само заетите часове
+    });
 
-    if (!isValidPhone(phone)) {
-      return res.status(400).json({ message: "❌ Невалиден телефонен номер. Въведете само цифри." });
-    }
-
-    const existing = await Booking.findOne({ date, hour });
-    if (existing) {
-      return res.status(400).json({ message: "❌ Този час вече е зает." });
-    }
-
-    const booking = new Booking({ ownerName, dogName, breed, phone, date, hour });
-    await booking.save();
-
-    res.status(201).json({ message: "✅ Резервацията е създадена успешно!", booking });
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при създаване на резервация", error: error.message });
+    renderCalendar();
+  } catch (err) {
+    console.error("❌ Грешка при зареждане на резервации:", err);
   }
-};
+}
 
-// 🧑‍💼 Админ: добавя нова резервация ръчно
-export const createBookingAdmin = async (req, res) => {
-  try {
-    const { ownerName, dogName, breed, phone, date, hour } = req.body;
+// Рендериране на календара
+function renderCalendar() {
+  calendar.innerHTML = "";
+  const week = [];
 
-    if (!ownerName || !dogName || !breed || !phone || !date || !hour) {
-      return res.status(400).json({ message: "❌ Моля, попълнете всички задължителни полета." });
-    }
-
-    if (!isValidPhone(phone)) {
-      return res.status(400).json({ message: "❌ Невалиден телефонен номер. Използвайте само цифри." });
-    }
-
-    const existing = await Booking.findOne({ date, hour });
-    if (existing) {
-      return res.status(400).json({ message: "❌ Този час вече е зает." });
-    }
-
-    const booking = new Booking({ ownerName, dogName, breed, phone, date, hour });
-    await booking.save();
-
-    res.status(201).json(booking);
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при създаване на резервация от администратор", error: error.message });
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    week.push(d);
   }
-};
 
-// 🧾 Връща всички резервации (админ)
-export const getBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find();
-    res.json(bookings);
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при зареждане", error: error.message });
-  }
-};
+  week.forEach(day => {
+    const dayDiv = document.createElement('div');
+    dayDiv.classList.add('day');
+    const options = { weekday: 'short', day: 'numeric', month: 'short' };
+    dayDiv.innerHTML = `<h4>${day.toLocaleDateString('bg-BG', options)}</h4>`;
 
-// 🧾 Връща резервациите само за потребителя (без лични данни на други потребители)
-export const getUserBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find({}, { date: 1, hour: 1, _id: 0 }); // връща само дата и час
-    res.json(bookings);
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при зареждане на потребителски резервации", error: error.message });
-  }
-};
+    for (let hour = 9; hour <= 18; hour += 2) {
+      const hourDiv = document.createElement('div');
+      hourDiv.classList.add('hour');
+      hourDiv.textContent = `${hour}:00`;
 
-// ✏️ Редактиране на резервация (админ)
-export const updateBooking = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { ownerName, dogName, breed, phone, date, hour } = req.body;
+      const dateStr = day.toISOString().split('T')[0];
+      const bookingsForDay = bookings[dateStr] || [];
 
-    if (!ownerName && !dogName && !breed && !phone && !date && !hour) {
-      return res.status(400).json({ message: "❌ Моля, въведете поне едно поле за промяна." });
-    }
-
-    if (phone && !isValidPhone(phone)) {
-      return res.status(400).json({ message: "❌ Невалиден телефонен номер. Използвайте само цифри." });
-    }
-
-    if (date || hour) {
-      const currentBooking = await Booking.findById(id);
-      if (!currentBooking) return res.status(404).json({ message: "❌ Резервацията не е намерена." });
-
-      const newDate = date || currentBooking.date;
-      const newHour = hour !== undefined ? hour : currentBooking.hour;
-
-      const conflict = await Booking.findOne({ 
-        date: newDate, 
-        hour: newHour,
-        _id: { $ne: id } 
+      // Проверка дали часът е зает
+      const booked = bookingsForDay.find(b => {
+        const bookedHour = typeof b.hour === "number" ? b.hour : parseInt(b.hour);
+        return bookedHour === hour;
       });
 
-      if (conflict) {
-        return res.status(400).json({ message: `❌ Часът ${newHour}:00 на ${newDate} вече е зает.` });
+      if (booked) {
+        hourDiv.classList.add('booked'); // червен фон
+        hourDiv.textContent = `${hour}:00 (заето)`;
+        // Опционално tooltip с име на собственик и куче
+        hourDiv.title = `${booked.ownerName} - ${booked.dogName}`;
+      } else {
+        hourDiv.addEventListener('click', () => {
+          selectedDate = dateStr;
+          selectedTime = hour;
+          selectedHour.textContent = `Избрахте ${selectedDate} в ${selectedTime}:00`;
+        });
       }
+
+      dayDiv.appendChild(hourDiv);
     }
 
-    const updated = await Booking.findByIdAndUpdate(
-      id,
-      { 
-        ...(ownerName && { ownerName }), 
-        ...(dogName && { dogName }), 
-        ...(breed && { breed }),
-        ...(phone && { phone }), 
-        ...(date && { date }), 
-        ...(hour !== undefined && { hour })
-      },
-      { new: true }
-    );
+    calendar.appendChild(dayDiv);
+  });
+}
 
-    if (!updated) return res.status(404).json({ message: "❌ Резервацията не е намерена." });
+// Изпращане на резервация
+document.getElementById('bookingForm').addEventListener('submit', async e => {
+  e.preventDefault();
 
-    res.json({ message: "✅ Резервацията е обновена успешно.", booking: updated });
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при обновяване", error: error.message });
+  if (!selectedDate || !selectedTime) {
+    alert("Моля, изберете ден и час!");
+    return;
   }
-};
 
-// ❌ Изтриване на резервация (админ)
-export const deleteBooking = async (req, res) => {
+  const bookingData = {
+    ownerName: document.getElementById('ownerName').value,
+    dogName: document.getElementById('dogName').value,
+    breed: document.getElementById('breed').value,
+    phone: document.getElementById('phone').value,
+    date: selectedDate,
+    hour: selectedTime
+  };
+
   try {
-    const { id } = req.params;
-    const deleted = await Booking.findByIdAndDelete(id);
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bookingData)
+    });
 
-    if (!deleted) return res.status(404).json({ message: "❌ Резервацията не е намерена." });
+    const result = await res.json();
+    if (!res.ok) {
+      alert(result.message || "⚠️ Грешка при създаване на резервация");
+      return;
+    }
 
-    res.json({ message: "🗑️ Резервацията е изтрита успешно." });
-  } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при изтриване", error: error.message });
+    alert("✅ Резервацията е успешна!");
+    e.target.reset();
+    selectedHour.textContent = '';
+    await loadBookings();
+  } catch (err) {
+    console.error("❌ Грешка при запис:", err);
+    alert("⚠️ Проблем със свързването към сървъра!");
   }
-};
+});
+
+// Добавяме CSS за червени заети часове
+const style = document.createElement('style');
+style.innerHTML = `
+  .hour.booked {
+    background-color: #f8d7da;
+    color: #721c24;
+    cursor: not-allowed;
+    font-weight: bold;
+    border: 1px solid #f5c2c7;
+    border-radius: 6px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+  .hour.booked:hover {
+    transform: none;
+  }
+`;
+document.head.appendChild(style);
+
+loadBookings();
