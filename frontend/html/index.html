@@ -132,7 +132,6 @@ function sliderWithControls(selector) {
     showSlide(index);
   };
 
-  // Добавяме клик за отваряне на голям екран
   slides.forEach(img => {
     img.style.cursor = "pointer";
     img.onclick = () => openLightbox(img.src);
@@ -141,7 +140,7 @@ function sliderWithControls(selector) {
 
 sliderWithControls(".salon-slider");
 
-// LIGHTBOX
+
 function openLightbox(src) {
   document.getElementById("lightbox-img").src = src;
   document.getElementById("lightbox").style.display = "flex";
@@ -150,8 +149,29 @@ function openLightbox(src) {
 document.getElementById("lightbox").onclick = () => {
   document.getElementById("lightbox").style.display = "none";
 };
+
+
+function initGallery(selector, interval = 3000) {
+  let index = 0;
+  const slides = document.querySelectorAll(`${selector} img`);
+
+  if (slides.length === 0) return;
+
+  function showSlide() {
+    slides.forEach((img, i) => {
+      img.style.display = i === index ? "block" : "none";
+    });
+
+    index = (index + 1) % slides.length;
+  }
+
+  showSlide();
+  setInterval(showSlide, interval);
+}
+
+initGallery(".gallery-container .gallery-slider");
 </script>
-<!-- Lightbox -->
+
 <div id="lightbox" style="
   display:none; 
   position:fixed; 
