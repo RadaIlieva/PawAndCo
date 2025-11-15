@@ -57,17 +57,20 @@
         </div>
       </div>
 
-      <div class="salon-image-box">
-        <div class="gallery-slider">
-          <img src="/images/20251104_110713.jpg" alt="Интериор на салона">
-          <img src="/images/20251104_110756.jpg" alt="Интериор на салона">
-          <img src="/images/cenorazzpis1.jpg" alt="Интериор на салона">
-          <img src="/images/cenorazzpis2.jpg" alt="Интериор на салона">
-        </div>
-      </div>
+          <div class="salon-image-box">
+            <div class="gallery-slider salon-slider">
+              <span class="slider-btn prev">❮</span>
 
-    </div>
-  </section>
+              <img src="/images/20251104_110713.jpg" class="slide-img">
+              <img src="/images/20251104_110756.jpg" class="slide-img">
+              <img src="/images/cenorazzpis1.jpg" class="slide-img">
+              <img src="/images/cenorazzpis2.jpg" class="slide-img">
+
+              <span class="slider-btn next">❯</span>
+            </div>
+          </div>
+      </div>
+    </section>
 
 
   <footer>
@@ -105,30 +108,62 @@
   </footer>
 
   <script>
-  function initGallery(selector, interval = 3000) {
-    let index = 0;
-    const slides = document.querySelectorAll(`${selector} img`);
+function sliderWithControls(selector) {
+  const slides = document.querySelectorAll(`${selector} .slide-img`);
+  const prev = document.querySelector(`${selector} .prev`);
+  const next = document.querySelector(`${selector} .next`);
+  let index = 0;
 
-    if (slides.length === 0) return;
-
-    function showSlide() {
-      slides.forEach((img, i) => {
-        img.style.display = i === index ? "block" : "none";
-      });
-
-      index = (index + 1) % slides.length;
-    }
-
-    showSlide();
-    setInterval(showSlide, interval);
+  function showSlide(i) {
+    slides.forEach((img, idx) => {
+      img.style.display = idx === i ? "block" : "none";
+    });
   }
 
-  // Първата галерия (салона)
-  initGallery(".salon-image-box .gallery-slider");
+  showSlide(index);
 
-  // Втората галерия (във футъра)
-  initGallery(".gallery-container .gallery-slider");
+  prev.onclick = () => {
+    index = (index - 1 + slides.length) % slides.length;
+    showSlide(index);
+  };
+
+  next.onclick = () => {
+    index = (index + 1) % slides.length;
+    showSlide(index);
+  };
+
+  // Добавяме клик за отваряне на голям екран
+  slides.forEach(img => {
+    img.style.cursor = "pointer";
+    img.onclick = () => openLightbox(img.src);
+  });
+}
+
+sliderWithControls(".salon-slider");
+
+// LIGHTBOX
+function openLightbox(src) {
+  document.getElementById("lightbox-img").src = src;
+  document.getElementById("lightbox").style.display = "flex";
+}
+
+document.getElementById("lightbox").onclick = () => {
+  document.getElementById("lightbox").style.display = "none";
+};
 </script>
+<!-- Lightbox -->
+<div id="lightbox" style="
+  display:none; 
+  position:fixed; 
+  top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.8);
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+">
+  <img id="lightbox-img" style="max-width:90%; max-height:90%; border-radius:10px;">
+</div>
+
 
 
   </body>

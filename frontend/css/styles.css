@@ -301,6 +301,43 @@ footer {
   box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
+.salon-slider {
+  position: relative;
+}
+
+.salon-slider img {
+  width: 100%;
+  display: none;
+  border-radius: 10px;
+}
+
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
+  color: white;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 24px;
+  border-radius: 6px;
+  user-select: none;
+  z-index: 10;
+}
+
+.slider-btn.prev {
+  left: 10px;
+}
+
+.slider-btn.next {
+  right: 10px;
+}
+
+.slider-btn:hover {
+  background: rgba(0,0,0,0.7);
+}
+
+
 /* 📱 Responsive */
 @media (max-width: 900px) {
   .salon-gallery-container {
@@ -368,3 +405,4 @@ footer {
     color: #fff;
   }
 }
+
