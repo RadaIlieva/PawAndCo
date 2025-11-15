@@ -12,6 +12,13 @@ const showCalendarBtn = document.getElementById('showCalendar');
 const selectedHour = document.getElementById('selectedHour');
 const prevWeekBtn = document.getElementById('prevWeek');
 const nextWeekBtn = document.getElementById('nextWeek');
+// 🎯 ПОКАЗВАНЕ / СКРИВАНЕ НА ЦЕНОРАЗПИСА
+const priceToggle = document.getElementById("priceToggle");
+const priceContainer = document.getElementById("priceContainer");
+const priceArrow = document.getElementById("priceArrow");
+
+
+
 
 // Показване/скриване на календара
 showCalendarBtn.addEventListener('click', () => {
@@ -28,6 +35,15 @@ prevWeekBtn.addEventListener('click', () => {
 nextWeekBtn.addEventListener('click', () => {
   weekStart.setDate(weekStart.getDate() + 7);
   renderCalendar();
+});
+priceToggle.addEventListener("click", () => {
+  if (priceContainer.style.display === "block") {
+    priceContainer.style.display = "none";
+    priceArrow.style.transform = "rotate(0deg)";
+  } else {
+    priceContainer.style.display = "block";
+    priceArrow.style.transform = "rotate(180deg)";
+  }
 });
 
 // Зареждане на резервации
