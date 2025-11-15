@@ -6,6 +6,7 @@
   <title>Резервирай час - Paw&Co</title>
 
   <!-- Връзка към външен CSS -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="/css/booking.css" />
 </head>
 
@@ -54,14 +55,11 @@
         <div class="calendar" id="calendar"></div>
       </div>
 
-      <p id="selectedHour"></p>
-      <button type="submit" class="btn">Резервирай</button>
-   
 
-      <div class="price-toggle" id="priceToggle">
-        <span>Ценоразпис</span>
-        <img src="/images/arrow-down.png" id="priceArrow" alt="Стрелка">
-      </div>
+     <div class="price-toggle" id="priceToggle">
+      <span>Ценоразпис</span>
+      <i class="fa fa-caret-square-o-down" id="priceArrow"></i>
+     </div>
 
       <div class="price-container" id="priceContainer">
         <div class="price-images">
@@ -69,6 +67,10 @@
             <img src="/images/cenorazzpis2.jpg" alt="Ценоразпис">
         </div>
       </div>
+
+      
+      <p id="selectedHour"></p>
+      <button type="submit" class="btn">Резервирай</button>
     </form>
 
   </section>
