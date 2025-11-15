@@ -28,7 +28,6 @@ header {
   margin: 0 auto;
 }
 
-/* Лого и заглавие */
 .logo-container {
   display: flex;
   align-items: center;
@@ -94,12 +93,12 @@ h2 {
 .booking-form textarea {
   width: 100%;
   padding: 10px;
-  padding-right: 15px; /* добавено разстояние от дясната страна */
+  padding-right: 15px; 
   margin-top: 5px;
   margin-right: 15px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  box-sizing: border-box; /* за да не излиза извън формата */
+  box-sizing: border-box;
 }
 .calendar-container {
   display: none;
@@ -199,7 +198,6 @@ h2 {
     text-align: center;
   }
 
-  /* Логото и името остават на един ред */
   .logo-container {
     display: flex;
     flex-direction: row;
@@ -213,7 +211,6 @@ h2 {
     margin: 0;
   }
 
-  /* Навигацията пада под логото и е центрирана */
   nav {
     display: flex;
     flex-wrap: wrap;
@@ -239,3 +236,43 @@ h2 {
   }
 }
 
+
+
+ .price-toggle {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .price-toggle img {
+      width: 20px;
+      transition: transform 0.3s;
+    }
+
+    .price-container {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .price-images {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .price-images img {
+      width: 48%;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .price-images img {
+        width: 100%;
+      }
+    }

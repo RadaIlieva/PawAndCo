@@ -105,19 +105,31 @@
   </footer>
 
   <script>
+  function initGallery(selector, interval = 3000) {
     let index = 0;
-    const slides = document.querySelectorAll('.gallery-slider img');
+    const slides = document.querySelectorAll(`${selector} img`);
 
-    function showNextImage() {
+    if (slides.length === 0) return;
+
+    function showSlide() {
       slides.forEach((img, i) => {
-        img.style.display = i === index ? 'block' : 'none';
+        img.style.display = i === index ? "block" : "none";
       });
+
       index = (index + 1) % slides.length;
     }
 
-    setInterval(showNextImage, 3000);
-    showNextImage();
-  </script>
+    showSlide();
+    setInterval(showSlide, interval);
+  }
+
+  // Първата галерия (салона)
+  initGallery(".salon-image-box .gallery-slider");
+
+  // Втората галерия (във футъра)
+  initGallery(".gallery-container .gallery-slider");
+</script>
+
 
   </body>
   </html>
