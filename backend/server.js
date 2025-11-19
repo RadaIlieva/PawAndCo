@@ -60,6 +60,13 @@ app.get("/admin.html", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "frontend/html/admin.html"));
 });
 
+app.get('/robots.txt', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'robots.txt'));
+});
+
+app.get('/sitemap.xml', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'frontend', 'sitemap.xml'));
+});
 
 
 
