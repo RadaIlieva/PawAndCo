@@ -12,15 +12,25 @@ const eurPrice = document.getElementById("eurPrice");
 
 
 // ---------- СЪЗДАВАНЕ / РЕДАКЦИЯ НА ПРОДУКТ ----------
+// ---------- СЪЗДАВАНЕ / РЕДАКЦИЯ НА ПРОДУКТ ----------
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    // 1. Вземаме стойността в евро от инпута
+    const priceInEUR = parseFloat(priceInput.value);
+    
+    // 2. Изчисляваме левовата равностойност (курс 1.96)
+    // Използваме .toFixed(2), за да запазим стандартен формат за валута
+    const priceInBGN = (priceInEUR * 1.96).toFixed(2);
 
     const formData = new FormData();
     formData.append("name", nameInput.value);
     formData.append("description", descriptionInput.value);
     formData.append("category", categoryInput.value);
-    formData.append("priceBGN", parseFloat(priceInput.value).toFixed(2));
+    
+    // 3. Изпращаме изчислената цена в лева към сървъра
+    formData.append("priceBGN", priceInBGN);
 
     if (imageInput.files[0]) {
       formData.append("image", imageInput.files[0]);
@@ -40,8 +50,10 @@ if (form) {
       }
 
       alert(id ? "✅ Продуктът е редактиран успешно!" : "✅ Продуктът е добавен успешно!");
+      
       form.reset();
-      eurPrice.textContent = "";
+      // Изчистваме и помощния текст за превалутиране, ако има такъв
+      if (eurPrice) eurPrice.textContent = ""; 
       editIdInput.value = "";
       loadProducts();
     } catch (err) {
@@ -87,31 +99,38 @@ function renderProducts() {
       : `${API_BASE_URL}${p.image}`;
 
     card.innerHTML = `
-      ${p.image ? `<img src="${imgUrl}" alt="${p.name}">` : ""}
-      <h3>${p.name}</h3>
-      <p>${p.description || "Без описание"}</p>
-      <p><b>${p.priceBGN} лв</b> (${eur} €)</p>
-      <p><i>${p.category || "Без категория"}</i></p>
-      <div class="btn-group">
-        <button onclick="editProduct('${p._id}')">✏️</button>
-        <button onclick="deleteProduct('${p._id}')" class="delete-btn">🗑️</button>
-      </div>
-    `;
+  ${p.image ? `<img src="${imgUrl}" alt="${p.name}">` : ""}
+  <h3>${p.name}</h3>
+  <p>${p.description || "Без описание"}</p>
+  <p><b>${eur} €</b> (${p.priceBGN} лв)</p>  <p><i>${p.category || "Без категория"}</i></p>
+  <div class="btn-group">
+    <button onclick="editProduct('${p._id}')">✏️</button>
+    <button onclick="deleteProduct('${p._id}')" class="delete-btn">🗑️</button>
+  </div>
+`;
     list.appendChild(card);
   });
 }
 
 // ---------- РЕДАКЦИЯ НА ПРОДУКТ ----------
+// Намерете тази функция и я заменете с това:
 window.editProduct = function (id) {
   const p = products.find((p) => p._id === id);
   if (!p) return;
 
+  const priceInEUR = (p.priceBGN / 1.96).toFixed(2); // Превръщаме BGN в EUR за формата
+
   nameInput.value = p.name;
   descriptionInput.value = p.description;
   categoryInput.value = p.category;
-  priceInput.value = p.priceBGN;
+  priceInput.value = priceInEUR; // Вече зареждаме EUR в инпута
   editIdInput.value = p._id;
-  eurPrice.textContent = `≈ ${(p.priceBGN / 1.96).toFixed(2)} €`;
+
+  // Тук показваме левовете като подсказка, за да знае админът колко е в момента
+  if (eurPrice) {
+    eurPrice.textContent = `≈ ${p.priceBGN} лв.`;
+  }
+  
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
