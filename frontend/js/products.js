@@ -28,7 +28,7 @@ async function renderProducts(filter = "Всички") {
       <img src="${API_BASE_URL}${p.image}" alt="${p.name}">
       <h3>${p.name}</h3>
       <p>${p.description}</p>
-      <p class="price">${p.priceBGN} лв (${eur} €)</p>
+      <p class="price">${eur} € (${p.priceBGN} лв)</p>
       <button class="buy-btn">Добави в количката</button>
     `;
     const btn = card.querySelector(".buy-btn");
@@ -43,7 +43,6 @@ function addToCart(product) {
   else cart.push({ ...product, quantity: 1 });
 
   updateCartIcon();
-
   showCartMessage(`${product.name} е добавен в количката 🛒`);
 }
 
@@ -51,7 +50,6 @@ function showCartMessage(message) {
   const msg = document.createElement("div");
   msg.textContent = message;
   msg.classList.add("cart-popup");
-
   document.body.appendChild(msg);
 
   setTimeout(() => msg.classList.add("visible"), 100);
@@ -68,11 +66,11 @@ function updateCartIcon() {
 
 function openCart() {
   productList.innerHTML = "";
-
   const cartBox = document.createElement("div");
   cartBox.classList.add("cart-box");
 
-  const total = cart.reduce((sum, p) => sum + p.priceBGN * p.quantity, 0);
+  const totalBGN = cart.reduce((sum, p) => sum + p.priceBGN * p.quantity, 0);
+  const totalEUR = (totalBGN / 1.96).toFixed(2);
 
   cartBox.innerHTML = `
     <h2>🛒 Моята количка</h2>
@@ -82,20 +80,21 @@ function openCart() {
         : `
       <ul class="cart-items">
         ${cart
-          .map(
-            (p) => `
+          .map((p) => {
+            const itemEur = (p.priceBGN / 1.96).toFixed(2);
+            return `
           <li>
             <img src="${API_BASE_URL}${p.image}" alt="${p.name}">
             <div>
               <strong>${p.name}</strong><br>
-              ${p.priceBGN} лв × ${p.quantity}
+              ${itemEur} € (${p.priceBGN} лв) × ${p.quantity}
             </div>
             <button class="remove-item" data-id="${p._id}">✖</button>
-          </li>`
-          )
+          </li>`;
+          })
           .join("")}
       </ul>
-      <p class="cart-total"><strong>Общо:</strong> ${total.toFixed(2)} лв</p>
+      <p class="cart-total"><strong>Общо:</strong> ${totalEUR} € (${totalBGN.toFixed(2)} лв)</p>
       <button id="orderBtn" class="primary-btn">Поръчай</button>
     `
     }
@@ -113,10 +112,7 @@ function openCart() {
     });
   });
 
-  document.getElementById("backToProducts").addEventListener("click", () => {
-    renderProducts();
-  });
-
+  document.getElementById("backToProducts").addEventListener("click", () => renderProducts());
   const orderBtn = document.getElementById("orderBtn");
   if (orderBtn) orderBtn.addEventListener("click", openOrderForm);
 }
@@ -128,7 +124,6 @@ function openOrderForm() {
       <input type="text" id="customerName" placeholder="Име и фамилия" required>
       <input type="tel" id="customerPhone" placeholder="Телефон" required>
       <input type="email" id="customerEmail" placeholder="Имейл" required>
-
       <div class="delivery-container">
         <p>Изберете начин на доставка:</p>
         <div class="delivery-options">
@@ -137,15 +132,12 @@ function openOrderForm() {
           <label><input type="radio" name="deliveryType" value="speedy"> До офис на Спиди</label>
         </div>
       </div>
-
       <div id="addressContainer">
         <input type="text" id="customerAddress" placeholder="Въведете адрес или офис">
       </div>
-
       <div class="note-container">
-        <textarea id="customerNote" placeholder="Бележка към поръчката (например цвят, размер и др.)"></textarea>
+        <textarea id="customerNote" placeholder="Бележка към поръчката"></textarea>
       </div>
-
       <div class="form-buttons">
         <button id="submitOrder" class="primary-btn">Изпрати поръчката</button>
         <button id="cancelOrder" class="secondary-btn">Откажи</button>
@@ -158,12 +150,8 @@ function openOrderForm() {
 
   deliveryRadios.forEach((radio) => {
     radio.addEventListener("change", () => {
-      if (radio.value === "home")
-        addressInput.placeholder = "Въведете адрес за доставка";
-      else if (radio.value === "econt")
-        addressInput.placeholder = "Въведете офис на Еконт";
-      else if (radio.value === "speedy")
-        addressInput.placeholder = "Въведете офис на Спиди";
+      if (radio.value === "home") addressInput.placeholder = "Въведете адрес за доставка";
+      else addressInput.placeholder = `Въведете офис на ${radio.value === "econt" ? "Еконт" : "Спиди"}`;
     });
   });
 
@@ -183,7 +171,7 @@ async function submitOrder() {
     return;
   }
 
-  const total = cart.reduce((sum, p) => sum + p.priceBGN * p.quantity, 0);
+  const totalBGN = cart.reduce((sum, p) => sum + p.priceBGN * p.quantity, 0);
 
   const order = {
     customerName: name,
@@ -197,7 +185,7 @@ async function submitOrder() {
       quantity: p.quantity,
       image: p.image,
     })),
-    totalPrice: total,
+    totalPrice: totalBGN,
   };
 
   try {
@@ -206,16 +194,13 @@ async function submitOrder() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(order),
     });
-
-    if (!res.ok) throw new Error("Грешка при изпращане на поръчката");
-
+    if (!res.ok) throw new Error("Грешка при изпращане");
     alert("✅ Поръчката е изпратена успешно!");
     cart = [];
     updateCartIcon();
     renderProducts();
   } catch (err) {
-    console.error(err);
-    alert("❌ Неуспешно изпращане на поръчката!");
+    alert("❌ Неуспешно изпращане!");
   }
 }
 
@@ -229,6 +214,6 @@ buttons.forEach((btn) => {
 
 window.addEventListener("DOMContentLoaded", () => {
   const cartIcon = document.getElementById("cartIcon");
-  cartIcon.addEventListener("click", openCart);
+  if (cartIcon) cartIcon.addEventListener("click", openCart);
   renderProducts();
 });

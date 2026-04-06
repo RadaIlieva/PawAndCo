@@ -8,28 +8,21 @@ const priceInput = document.getElementById("price");
 const imageInput = document.getElementById("image");
 const editIdInput = document.getElementById("editId");
 const eurPrice = document.getElementById("eurPrice");
+const API_BASE_URL = window.location.origin;
 
-
-
-// ---------- СЪЗДАВАНЕ / РЕДАКЦИЯ НА ПРОДУКТ ----------
 // ---------- СЪЗДАВАНЕ / РЕДАКЦИЯ НА ПРОДУКТ ----------
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // 1. Вземаме стойността в евро от инпута
+    // 1. Вземаме евро от инпута и го превръщаме в лева за базата
     const priceInEUR = parseFloat(priceInput.value);
-    
-    // 2. Изчисляваме левовата равностойност (курс 1.96)
-    // Използваме .toFixed(2), за да запазим стандартен формат за валута
     const priceInBGN = (priceInEUR * 1.96).toFixed(2);
 
     const formData = new FormData();
     formData.append("name", nameInput.value);
     formData.append("description", descriptionInput.value);
     formData.append("category", categoryInput.value);
-    
-    // 3. Изпращаме изчислената цена в лева към сървъра
     formData.append("priceBGN", priceInBGN);
 
     if (imageInput.files[0]) {
@@ -37,48 +30,51 @@ if (form) {
     }
 
     const id = editIdInput.value;
-    const url = id
-      ? `${API_BASE_URL}/api/products/${id}`
-      : `${API_BASE_URL}/api/products`;
+    const url = id ? `${API_BASE_URL}/api/products/${id}` : `${API_BASE_URL}/api/products`;
     const method = id ? "PUT" : "POST";
 
     try {
       const res = await fetch(url, { method, body: formData });
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Грешка при запис на продукта: ${errorText}`);
-      }
+      if (!res.ok) throw new Error(await res.text());
 
       alert(id ? "✅ Продуктът е редактиран успешно!" : "✅ Продуктът е добавен успешно!");
       
       form.reset();
-      // Изчистваме и помощния текст за превалутиране, ако има такъв
       if (eurPrice) eurPrice.textContent = ""; 
       editIdInput.value = "";
       loadProducts();
     } catch (err) {
-      console.error("Грешка при запис на продукт:", err);
+      console.error("Грешка:", err);
       alert("⚠️ " + err.message);
     }
   });
+}
+
+// Помощна функция: Показва левовата равностойност в реално време, докато админът пише
+if (priceInput) {
+    priceInput.addEventListener("input", () => {
+        const val = parseFloat(priceInput.value);
+        if (!isNaN(val) && eurPrice) {
+            eurPrice.textContent = `≈ ${(val * 1.96).toFixed(2)} лв.`;
+        } else if (eurPrice) {
+            eurPrice.textContent = "";
+        }
+    });
 }
 
 // ---------- ЗАРЕЖДАНЕ НА ПРОДУКТИ ----------
 async function loadProducts() {
   try {
     const res = await fetch(`${API_BASE_URL}/api/products`);
-    if (!res.ok) throw new Error("Неуспешно зареждане на продуктите");
-
+    if (!res.ok) throw new Error("Неуспешно зареждане");
     products = await res.json();
     renderProducts();
   } catch (err) {
-    console.error("Грешка при зареждане на продуктите:", err);
-    if (list)
-      list.innerHTML = "<p>⚠️ Неуспешно зареждане на продуктите.</p>";
+    if (list) list.innerHTML = "<p>⚠️ Неуспешно зареждане на продуктите.</p>";
   }
 }
 
-// ---------- РЕНДИРАНЕ НА ПРОДУКТИ ----------
+// ---------- РЕНДИРАНЕ НА ПРОДУКТИ (ADMIN LIST) ----------
 function renderProducts() {
   if (!list) return;
   list.innerHTML = "";
@@ -92,69 +88,52 @@ function renderProducts() {
     const eur = (p.priceBGN / 1.96).toFixed(2);
     const card = document.createElement("div");
     card.classList.add("product-card");
-    card.dataset.id = p._id;
-
-    const imgUrl = p.image?.startsWith("http")
-      ? p.image
-      : `${API_BASE_URL}${p.image}`;
+    
+    const imgUrl = p.image?.startsWith("http") ? p.image : `${API_BASE_URL}${p.image}`;
 
     card.innerHTML = `
-  ${p.image ? `<img src="${imgUrl}" alt="${p.name}">` : ""}
-  <h3>${p.name}</h3>
-  <p>${p.description || "Без описание"}</p>
-  <p><b>${eur} €</b> (${p.priceBGN} лв)</p>  <p><i>${p.category || "Без категория"}</i></p>
-  <div class="btn-group">
-    <button onclick="editProduct('${p._id}')">✏️</button>
-    <button onclick="deleteProduct('${p._id}')" class="delete-btn">🗑️</button>
-  </div>
-`;
+      ${p.image ? `<img src="${imgUrl}" alt="${p.name}">` : ""}
+      <h3>${p.name}</h3>
+      <p>${p.description || "Без описание"}</p>
+      <p><b>${eur} €</b> (${p.priceBGN} лв)</p>
+      <p><i>${p.category || "Без категория"}</i></p>
+      <div class="btn-group">
+        <button onclick="editProduct('${p._id}')">✏️</button>
+        <button onclick="deleteProduct('${p._id}')" class="delete-btn">🗑️</button>
+      </div>
+    `;
     list.appendChild(card);
   });
 }
 
-// ---------- РЕДАКЦИЯ НА ПРОДУКТ ----------
-// Намерете тази функция и я заменете с това:
+// ---------- ПОДГОТОВКА ЗА РЕДАКЦИЯ ----------
 window.editProduct = function (id) {
   const p = products.find((p) => p._id === id);
   if (!p) return;
 
-  const priceInEUR = (p.priceBGN / 1.96).toFixed(2); // Превръщаме BGN в EUR за формата
+  const priceInEUR = (p.priceBGN / 1.96).toFixed(2);
 
   nameInput.value = p.name;
   descriptionInput.value = p.description;
   categoryInput.value = p.category;
-  priceInput.value = priceInEUR; // Вече зареждаме EUR в инпута
+  priceInput.value = priceInEUR; // Слагаме евро в полето за редактиране
   editIdInput.value = p._id;
 
-  // Тук показваме левовете като подсказка, за да знае админът колко е в момента
-  if (eurPrice) {
-    eurPrice.textContent = `≈ ${p.priceBGN} лв.`;
-  }
-  
+  if (eurPrice) eurPrice.textContent = `≈ ${p.priceBGN} лв.`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
 // ---------- ИЗТРИВАНЕ НА ПРОДУКТ ----------
 window.deleteProduct = async function (id) {
-  if (!confirm("Сигурни ли сте, че искате да изтриете продукта?")) return;
-
+  if (!confirm("Сигурни ли сте?")) return;
   try {
-    const res = await fetch(`${API_BASE_URL}/api/products/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      throw new Error(`Грешка при изтриване на продукта: ${errorText}`);
-    }
-
-    alert("✅ Продуктът е изтрит успешно!");
+    const res = await fetch(`${API_BASE_URL}/api/products/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Грешка при триене");
+    alert("✅ Продуктът е изтрит!");
     loadProducts();
   } catch (err) {
-    console.error("Грешка при изтриване на продукт:", err);
     alert("⚠️ " + err.message);
   }
 };
 
-// ---------- ИНИЦИАЛНО ЗАРЕЖДАНЕ ----------
 document.addEventListener("DOMContentLoaded", loadProducts);
