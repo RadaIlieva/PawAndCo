@@ -173,14 +173,16 @@ function showAddBookingForm(date = "", hour = "") {
     `;
 
     document.getElementById("saveNewBooking").addEventListener("click", async () => {
-        const newBooking = {
-            date: document.getElementById("newDate").value,
-            hour: Number(document.getElementById("newHour").value),
-            ownerName: document.getElementById("newOwner").value,
-            dogName: document.getElementById("newDog").value,
-            breed: document.getElementById("newBreed").value,
-            phone: document.getElementById("newPhone").value
-        };
+            const newBooking = {
+                date: document.getElementById("newDate").value,
+                hour: Number(document.getElementById("newHour").value),
+
+                // 👉 ако няма данни → слагаме автоматично
+                ownerName: document.getElementById("newOwner").value || "BLOCKED",
+                dogName: document.getElementById("newDog").value || "-",
+                breed: document.getElementById("newBreed").value || "-",
+                phone: document.getElementById("newPhone").value || "000000000"
+            };
 
         if (!newBooking.ownerName || !newBooking.dogName || !newBooking.breed || !newBooking.phone) {
             alert("⚠️ Моля, попълнете всички полета.");

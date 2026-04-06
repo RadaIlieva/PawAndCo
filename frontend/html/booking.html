@@ -1,83 +1,83 @@
-<!DOCTYPE html>
-<html lang="bg">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="canonical" href="https://pawandco.onrender.com/booking.html">
+  <!DOCTYPE html>
+  <html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="canonical" href="https://pawandco.onrender.com/booking.html">
 
-  <title>Резервирай час - Paw&Co</title>
+    <title>Резервирай час - Paw&Co</title>
 
-  <!-- Връзка към външен CSS -->
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/css/booking.css" />
-</head>
+    <!-- Връзка към външен CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/booking.css" />
+  </head>
 
-<body>
-  <header>
-    <div class="header-content">
-      <div class="logo-container">
-        <img src="/images/logo2.jpg" alt="Лого" class="logo" />
-        <h1>Paw&Co. Grooming Studio</h1>
-      </div>
-      <nav>
-        <a href="index.html">Начало</a>
-        <a href="booking.html" class="active">Резервирай час</a>
-        <a href="products.html">Продукти</a>
-      </nav>
-    </div>
-  </header>
-
-  <section class="booking">
-    <h2>Резервирай час</h2>
-
-    <form class="booking-form" id="bookingForm">
-      <label>Име на собственика</label>
-      <input type="text" id="ownerName" required>
-
-      <label>Име на кучето</label>
-      <input type="text" id="dogName" required>
-
-      <label>Порода</label>
-      <input type="text" id="breed" required>
-
-      <label>Телефон</label>
-      <input type="text" id="phone" required>
-
-      <div class="calendar-toggle">
-        <span>Избери ден и час</span>
-        <img src="/images/calendar.png" id="showCalendar" alt="Календар">
-      </div>
-
-      <div class="calendar-container">
-        <div class="calendar-nav">
-          <span class="nav-arrow" id="prevWeek">&#8592;</span>
-          <span>Седмица</span>  
-          <span class="nav-arrow" id="nextWeek">&#8594;</span>
+  <body>
+    <header>
+      <div class="header-content">
+        <div class="logo-container">
+          <img src="/images/logo2.jpg" alt="Лого" class="logo" />
+          <h1>Paw&Co. Grooming Studio</h1>
         </div>
-        <div class="calendar" id="calendar"></div>
+        <nav>
+          <a href="index.html">Начало</a>
+          <a href="booking.html" class="active">Резервирай час</a>
+          <a href="products.html">Продукти</a>
+        </nav>
       </div>
+    </header>
 
+    <section class="booking">
+      <h2>Резервирай час</h2>
 
-     <div class="price-toggle" id="priceToggle">
-      <span>Ценоразпис</span>
-      <i class="fa fa-caret-square-o-down" id="priceArrow"></i>
-     </div>
+      <form class="booking-form" id="bookingForm">
+        <label>Име на собственика</label>
+        <input type="text" id="ownerName" required>
 
-      <div class="price-container" id="priceContainer">
-        <div class="price-images">
-            <img src="/images/cenorazzpis1.jpg" alt="Ценоразпис">
-            <img src="/images/cenorazzpis2.jpg" alt="Ценоразпис">
+        <label>Име на кучето</label>
+        <input type="text" id="dogName" required>
+
+        <label>Порода</label>
+        <input type="text" id="breed" required>
+
+        <label>Телефон</label>
+        <input type="text" id="phone" required>
+
+        <div class="calendar-toggle">
+          <span>Избери ден и час</span>
+          <img src="/images/calendar.png" id="showCalendar" alt="Календар">
         </div>
+
+        <div class="calendar-container">
+          <div class="calendar-nav">
+            <span class="nav-arrow" id="prevWeek">&#8592;</span>
+            <span>Седмица</span>  
+            <span class="nav-arrow" id="nextWeek">&#8594;</span>
+          </div>
+          <div class="calendar" id="calendar"></div>
+        </div>
+
+
+      <div class="price-toggle" id="priceToggle">
+        <span>Ценоразпис</span>
+        <i class="fa fa-caret-square-o-down" id="priceArrow"></i>
       </div>
 
-      
-      <p id="selectedHour"></p>
-      <button type="submit" class="btn">Резервирай</button>
-    </form>
+        <div class="price-container" id="priceContainer">
+          <div class="price-images">
+              <img src="/images/cenorazzpis1.jpg" alt="Ценоразпис">
+              <img src="/images/cenorazzpis2.jpg" alt="Ценоразпис">
+          </div>
+        </div>
 
-  </section>
+        
+        <p id="selectedHour"></p>
+        <button type="submit" class="btn">Резервирай</button>
+      </form>
 
-  <!-- Външен JavaScript файл -->
-  <script src="/js/booking.js"></script>
-</body>
-</html>
+    </section>
+
+    <!-- Външен JavaScript файл -->
+    <script src="/js/booking.js"></script>
+  </body>
+  </html>
