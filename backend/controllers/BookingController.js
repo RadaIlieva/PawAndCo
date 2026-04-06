@@ -33,17 +33,12 @@ export const createBooking = async (req, res) => {
   }
 };
 
-// 🧑‍💼 Админ: добавя нова резервация ръчно
 export const createBookingAdmin = async (req, res) => {
   try {
-    const { ownerName, dogName, breed, phone, date, hour } = req.body;
+    let { ownerName, dogName, breed, phone, date, hour } = req.body;
 
-    if (!ownerName || !dogName || !breed || !phone || !date || !hour) {
-      return res.status(400).json({ message: "❌ Моля, попълнете всички задължителни полета." });
-    }
-
-    if (!isValidPhone(phone)) {
-      return res.status(400).json({ message: "❌ Невалиден телефонен номер. Използвайте само цифри." });
+    if (!date || hour === undefined) {
+      return res.status(400).json({ message: "❌ Дата и час са задължителни." });
     }
 
     const existing = await Booking.findOne({ date, hour });
@@ -51,12 +46,21 @@ export const createBookingAdmin = async (req, res) => {
       return res.status(400).json({ message: "❌ Този час вече е зает." });
     }
 
-    const booking = new Booking({ ownerName, dogName, breed, phone, date, hour });
+    // 👉 АКО НЯМА ДАННИ – слагаме фиктивни
+    const booking = new Booking({
+      ownerName: ownerName || "BLOCKED",
+      dogName: dogName || "-",
+      breed: breed || "-",
+      phone: phone || "000000000",
+      date,
+      hour
+    });
+
     await booking.save();
 
     res.status(201).json(booking);
   } catch (error) {
-    res.status(500).json({ message: "⚠️ Грешка при създаване на резервация от администратор", error: error.message });
+    res.status(500).json({ message: "⚠️ Грешка", error: error.message });
   }
 };
 
