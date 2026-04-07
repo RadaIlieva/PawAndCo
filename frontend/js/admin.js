@@ -13,78 +13,106 @@ const productsSection = document.getElementById("productsSection");
 
 const API_BASE_URL = window.location.origin;
 
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// ---------- ВХОД В СИСТЕМАТА ----------
+if (loginForm) {
+    loginForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-  const email = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
+        const email = document.getElementById("username").value;
+        const password = document.getElementById("password").value;
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || "Грешка при вход");
+
+            // Запазваме токена
+            sessionStorage.setItem("adminToken", data.token);
+
+            loginMessage.textContent = "";
+            loginSection.classList.add("hidden");
+            adminPanel.classList.remove("hidden");
+
+            // ✅ Първоначално зареждане на всички данни след логване
+            loadAllAdminData();
+
+        } catch (err) {
+            loginMessage.textContent = "⚠️ " + err.message;
+        }
     });
+}
 
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message || "Грешка при вход");
-
-    // ✅ Запазваме токена в sessionStorage (по-сигурно от localStorage)
-    sessionStorage.setItem("adminToken", data.token);
-
-    loginMessage.textContent = "";
-    loginSection.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-
-    // Зареждаме нужните данни
-    if (typeof loadAdminBookings === "function") loadAdminBookings();
-    if (typeof loadOrders === "function") loadOrders();
-    if (typeof loadProducts === "function") loadProducts();
-  } catch (err) {
-    loginMessage.textContent = "⚠️ " + err.message;
-  }
-});
-
+// ---------- ПРОВЕРКА НА ТОКЕН ПРИ ЗАРЕЖДАНЕ ----------
 document.addEventListener("DOMContentLoaded", async () => {
-  const token = sessionStorage.getItem("adminToken");
+    const token = sessionStorage.getItem("adminToken");
 
-  if (!token) {
-    loginSection.classList.remove("hidden");
-    adminPanel.classList.add("hidden");
-    return;
-  }
+    if (!token) {
+        loginSection.classList.remove("hidden");
+        adminPanel.classList.add("hidden");
+        return;
+    }
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/admin/verify`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+        const res = await fetch(`${API_BASE_URL}/api/admin/verify`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
 
-    if (!res.ok) throw new Error();
+        if (!res.ok) throw new Error();
 
-    loginSection.classList.add("hidden");
-    adminPanel.classList.remove("hidden");
-  } catch {
-    sessionStorage.removeItem("adminToken");
-    loginSection.classList.remove("hidden");
-    adminPanel.classList.add("hidden");
-  }
+        loginSection.classList.add("hidden");
+        adminPanel.classList.remove("hidden");
+
+        // ✅ Автоматично зареждаме данните, ако вече сме логнати
+        loadAllAdminData();
+
+    } catch (err) {
+        sessionStorage.removeItem("adminToken");
+        loginSection.classList.remove("hidden");
+        adminPanel.classList.add("hidden");
+    }
 });
 
+// ---------- ГЛОБАЛНО ЗАРЕЖДАНЕ ----------
+function loadAllAdminData() {
+    // Проверяваме дали функциите съществуват (от другите файлове) и ги викаме
+    if (typeof window.loadAdminBookings === "function") window.loadAdminBookings();
+    if (typeof window.loadOrders === "function") window.loadOrders();
+    if (typeof window.loadProducts === "function") window.loadProducts();
+}
+
+// ---------- ИЗХОД ----------
 window.logoutAdmin = function () {
-  sessionStorage.removeItem("adminToken");
-  window.location.reload();
+    sessionStorage.removeItem("adminToken");
+    window.location.reload();
 };
 
-calendarBtn.addEventListener("click", () => showSection("calendarSection"));
-ordersBtn.addEventListener("click", () => showSection("ordersSection"));
-productsBtn.addEventListener("click", () => showSection("productsSection"));
+// ---------- НАВИГАЦИЯ МЕЖДУ ТАБОВЕТЕ ----------
+if (calendarBtn) calendarBtn.addEventListener("click", () => showSection("calendarSection"));
+if (ordersBtn) ordersBtn.addEventListener("click", () => showSection("ordersSection"));
+if (productsBtn) productsBtn.addEventListener("click", () => showSection("productsSection"));
 
 function showSection(id) {
-  [calendarSection, ordersSection, productsSection].forEach((s) =>
-    s.classList.add("hidden")
-  );
-  calendarSection.classList.toggle("hidden", id !== "calendarSection");
-  ordersSection.classList.toggle("hidden", id !== "ordersSection");
-  productsSection.classList.toggle("hidden", id !== "productsSection");
+    // 1. Скриваме всички секции и махаме активния клас от бутоните
+    [calendarSection, ordersSection, productsSection].forEach(s => s.classList.add("hidden"));
+    [calendarBtn, ordersBtn, productsBtn].forEach(b => b.classList.remove("active"));
+
+    // 2. Показваме избраната секция
+    const targetSection = document.getElementById(id);
+    if (targetSection) targetSection.classList.remove("hidden");
+
+    // 3. Слагаме активен клас на съответния бутон
+    if (id === "calendarSection") calendarBtn.classList.add("active");
+    if (id === "ordersSection") ordersBtn.classList.add("active");
+    if (id === "productsSection") productsBtn.classList.add("active");
+
+    // 4. ✅ КЛЮЧОВО: Презареждаме данните за конкретната секция при клик
+    if (id === "calendarSection" && typeof window.loadAdminBookings === "function") window.loadAdminBookings();
+    if (id === "ordersSection" && typeof window.loadOrders === "function") window.loadOrders();
+    if (id === "productsSection" && typeof window.loadProducts === "function") window.loadProducts();
 }
