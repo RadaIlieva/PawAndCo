@@ -83,7 +83,7 @@ function loadAllAdminData() {
     // Проверяваме дали функциите съществуват (от другите файлове) и ги викаме
     if (typeof window.loadAdminBookings === "function") window.loadAdminBookings();
     if (typeof window.loadOrders === "function") window.loadOrders();
-    if (typeof window.renderAdminProductsList === "function") window.renderAdminProductsList();
+    if (window.loadProducts) window.loadProducts();
 }
 
 // ---------- ИЗХОД ----------

@@ -138,6 +138,3 @@ window.deleteProduct = async function (id) {
     alert("⚠️ " + err.message);
   }
 };
-
-// Изпълняваме при зареждане
-document.addEventListener("DOMContentLoaded", window.loadProducts);
