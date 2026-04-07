@@ -1,3 +1,6 @@
+// ---------- ГЛОБАЛНИ ПРЕМИНЛИВИ ----------
+window.API_BASE_URL = window.API_BASE_URL || window.location.origin;
+
 const loginForm = document.getElementById("loginForm");
 const loginMessage = document.getElementById("loginMessage");
 const loginSection = document.getElementById("loginSection");
@@ -11,8 +14,6 @@ const calendarSection = document.getElementById("calendarSection");
 const ordersSection = document.getElementById("ordersSection");
 const productsSection = document.getElementById("productsSection");
 
-const API_BASE_URL = window.location.origin;
-
 // ---------- ВХОД В СИСТЕМАТА ----------
 if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
@@ -22,7 +23,7 @@ if (loginForm) {
         const password = document.getElementById("password").value;
 
         try {
-            const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
+            const res = await fetch(`${window.API_BASE_URL}/api/admin/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -32,14 +33,12 @@ if (loginForm) {
 
             if (!res.ok) throw new Error(data.message || "Грешка при вход");
 
-            // Запазваме токена
             sessionStorage.setItem("adminToken", data.token);
 
             loginMessage.textContent = "";
             loginSection.classList.add("hidden");
             adminPanel.classList.remove("hidden");
 
-            // ✅ Първоначално зареждане на всички данни след логване
             loadAllAdminData();
 
         } catch (err) {
@@ -59,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     try {
-        const res = await fetch(`${API_BASE_URL}/api/admin/verify`, {
+        const res = await fetch(`${window.API_BASE_URL}/api/admin/verify`, {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -68,7 +67,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         loginSection.classList.add("hidden");
         adminPanel.classList.remove("hidden");
 
-        // ✅ Автоматично зареждаме данните, ако вече сме логнати
         loadAllAdminData();
 
     } catch (err) {
@@ -80,10 +78,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // ---------- ГЛОБАЛНО ЗАРЕЖДАНЕ ----------
 function loadAllAdminData() {
-    // Проверяваме дали функциите съществуват (от другите файлове) и ги викаме
     if (typeof window.loadAdminBookings === "function") window.loadAdminBookings();
     if (typeof window.loadOrders === "function") window.loadOrders();
-    if (window.loadProducts) window.loadProducts();
+    if (typeof window.loadProducts === "function") window.loadProducts();
 }
 
 // ---------- ИЗХОД ----------
@@ -98,21 +95,55 @@ if (ordersBtn) ordersBtn.addEventListener("click", () => showSection("ordersSect
 if (productsBtn) productsBtn.addEventListener("click", () => showSection("productsSection"));
 
 function showSection(id) {
-    // 1. Скриваме всички секции и махаме активния клас от бутоните
     [calendarSection, ordersSection, productsSection].forEach(s => s.classList.add("hidden"));
     [calendarBtn, ordersBtn, productsBtn].forEach(b => b.classList.remove("active"));
 
-    // 2. Показваме избраната секция
     const targetSection = document.getElementById(id);
     if (targetSection) targetSection.classList.remove("hidden");
 
-    // 3. Слагаме активен клас на съответния бутон
     if (id === "calendarSection") calendarBtn.classList.add("active");
     if (id === "ordersSection") ordersBtn.classList.add("active");
     if (id === "productsSection") productsBtn.classList.add("active");
 
-    // 4. ✅ КЛЮЧОВО: Презареждаме данните за конкретната секция при клик
     if (id === "calendarSection" && typeof window.loadAdminBookings === "function") window.loadAdminBookings();
     if (id === "ordersSection" && typeof window.loadOrders === "function") window.loadOrders();
     if (id === "productsSection" && typeof window.loadProducts === "function") window.loadProducts();
 }
+
+// ---------- ФУНКЦИЯ ЗА ПРОДУКТИ ----------
+window.loadProducts = async function () {
+    const token = sessionStorage.getItem("adminToken");
+    if (!token) return;
+
+    try {
+        const res = await fetch(`${window.API_BASE_URL}/api/products`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!res.ok) throw new Error("Грешка при извличане на продуктите");
+
+        const products = await res.json();
+
+        // Изчистваме старото съдържание
+        productsSection.innerHTML = "";
+
+        if (!products.length) {
+            productsSection.textContent = "Няма продукти за показване.";
+            return;
+        }
+
+        products.forEach(p => {
+            const div = document.createElement("div");
+            div.classList.add("product-item");
+            div.innerHTML = `
+                <h3>${p.name}</h3>
+                <p>${p.description || "Няма описание"}</p>
+                <p>Цена: ${p.price || "Няма цена"}</p>
+            `;
+            productsSection.appendChild(div);
+        });
+
+    } catch (err) {
+        productsSection.textContent = "⚠️ " + err.message;
+    }
+};
