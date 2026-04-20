@@ -6,28 +6,28 @@ async function deleteOldBookings() {
   try {
     const now = new Date();
 
-    // Текущата неделя (00:00 часа)
+    // намираме текущата неделя
     const currentSunday = new Date(now);
     currentSunday.setHours(0, 0, 0, 0);
 
-    // Миналата неделя
+    const dayOfWeek = currentSunday.getDay(); // 0 = Sunday
+    currentSunday.setDate(currentSunday.getDate() - dayOfWeek);
+
+    // намираме предишната неделя
     const prevSunday = new Date(currentSunday);
     prevSunday.setDate(prevSunday.getDate() - 7);
 
-    // Неделята преди миналата (2 седмици назад)
-    const weekBeforePrev = new Date(prevSunday);
-    weekBeforePrev.setDate(weekBeforePrev.getDate() - 7);
-
-    // Изтриваме резервациите, създадени между weekBeforePrev и prevSunday
+    // 🔥 ИЗТРИВАМЕ ВСИЧКО ПРЕДИ ПРЕДИШНАТА НЕДЕЛЯ
     const result = await Booking.deleteMany({
-      createdAt: { $gte: weekBeforePrev, $lt: prevSunday },
+      date: { $lt: prevSunday }
     });
 
     console.log(
-      `🧹 Изтрити са ${result.deletedCount} резервации от предходната седмица (${weekBeforePrev.toDateString()} - ${prevSunday.toDateString()})`
+      `🧹 Изтрити ${result.deletedCount} резервации преди ${prevSunday.toDateString()}`
     );
+
   } catch (err) {
-    console.error("⚠️ Грешка при автоматично изтриване:", err.message);
+    console.error("⚠️ Грешка при изтриване:", err.message);
   }
 }
 
